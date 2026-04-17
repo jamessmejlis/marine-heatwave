@@ -21,6 +21,7 @@
 import type { Region } from "./regions";
 import type { Climatology } from "./climatology";
 import { dayOfYear } from "./climatology";
+import type { Calibration } from "./calibration";
 import type { DailySst, SstSeries } from "./sst";
 
 export const CATEGORIES = ["Moderate", "Strong", "Severe", "Extreme"] as const;
@@ -80,40 +81,48 @@ const MAX_GAP = 2;
 
 /**
  * Build per-day assessments by joining live SST with climatology on DOY.
+ *
+ * If a calibration is provided, the offset is subtracted from raw SST
+ * before any comparison to climatology — and the calibrated value is
+ * what's surfaced as `sst` so the displayed °C number matches the
+ * anomaly arithmetic. See src/lib/calibration.ts.
  */
 function buildSeries(
   daily: DailySst[],
   climo: Climatology | null,
+  calibration: Calibration | null,
 ): DayAssessment[] {
+  const offset = calibration?.offset ?? 0;
   return daily.map((d) => {
+    const sstCal = d.sst !== null ? d.sst - offset : null;
     const doy = dayOfYear(d.date);
     const c = climo?.byDoy.get(doy) ?? null;
-    if (d.sst === null || c === null) {
+    if (sstCal === null || c === null) {
       return {
         date: d.date,
         doy,
-        sst: d.sst,
+        sst: sstCal,
         seas: c?.seas ?? null,
         thresh: c?.thresh ?? null,
-        anomaly: d.sst !== null && c ? d.sst - c.seas : null,
+        anomaly: sstCal !== null && c ? sstCal - c.seas : null,
         relThreshNorm:
-          d.sst !== null && c && c.thresh !== c.seas
-            ? (d.sst - c.seas) / (c.thresh - c.seas)
+          sstCal !== null && c && c.thresh !== c.seas
+            ? (sstCal - c.seas) / (c.thresh - c.seas)
             : null,
         aboveThreshold: false,
       };
     }
-    const anomaly = d.sst - c.seas;
+    const anomaly = sstCal - c.seas;
     const denom = c.thresh - c.seas;
     return {
       date: d.date,
       doy,
-      sst: d.sst,
+      sst: sstCal,
       seas: c.seas,
       thresh: c.thresh,
       anomaly,
       relThreshNorm: denom !== 0 ? anomaly / denom : null,
-      aboveThreshold: d.sst > c.thresh,
+      aboveThreshold: sstCal > c.thresh,
     };
   });
 }
@@ -193,8 +202,9 @@ function detectEvents(series: DayAssessment[]): MhwEvent[] {
 export function classifyRegion(
   sst: SstSeries,
   climo: Climatology | null,
+  calibration: Calibration | null = null,
 ): RegionState {
-  const series = buildSeries(sst.daily, climo);
+  const series = buildSeries(sst.daily, climo, calibration);
 
   // Latest non-null SST day
   let latest: DayAssessment | null = null;

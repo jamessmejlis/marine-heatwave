@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build-climatology": "bun run scripts/build-climatology.ts",
+    "build-calibration": "bun run scripts/build-calibration.ts"
   },
   "dependencies": {
     "next": "16.2.4",

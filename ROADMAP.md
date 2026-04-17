@@ -40,12 +40,13 @@ These are documented in the footer for public transparency but are also our back
 
 Small changes that close the transparency gap and add one high-signal visual. Target: ship within a week of v1.0.
 
-### Calibration pass _(highest priority — closes the offset caveat)_
+### Calibration pass _(shipped — closes the offset caveat)_
 
-- [ ] In [`scripts/build-climatology.ts`](scripts/build-climatology.ts), add a second pass that fetches the overlapping 90-day window of both CoralTemp and Open-Meteo SST per region, computes mean offset `Δ = OM − CT`, emits `data/calibration/<region-id>.json`
-- [ ] At request time, apply `sst_calibrated = sst_openmeteo − Δ` before comparison to climatology
-- [ ] Footer copy: drop the caveat paragraph; note calibration in methodology instead
-- [ ] Re-run NIWA cross-check — Hauraki Gulf anomaly should move closer to NIWA's forecast
+- [x] Standalone [`scripts/build-calibration.ts`](scripts/build-calibration.ts) (split out from build-climatology because cadence differs — calibration refreshes monthly-ish, climatology is one-shot) fetches the overlapping ~95-day window of both CoralTemp and Open-Meteo SST per region, computes scalar mean offset `Δ = OM − CT`, emits `data/calibration/<region-id>.json`
+- [x] At request time, [`src/lib/calibration.ts`](src/lib/calibration.ts) loader returns the offset; [`src/lib/hobday.ts:buildSeries`](src/lib/hobday.ts) subtracts it from raw SST before all comparison to climatology (anomaly, threshold, category, displayed °C)
+- [x] Footer copy: dropped the "hybrid sources" caveat paragraph; methodology section now describes the calibration pipeline
+- [x] **Diagnostic emitted alongside:** `data/calibration/_diagnostic.json` carries per-region weekly residuals + linear slope of `(OM − CT)` across the window. Build-time only, drives the v1.2 decision on whether scalar correction needs to graduate to per-DOY. On first run all 10 regions flagged with seasonal residual range > 0.4 °C — scalar shipped as the v1.1 minimum-viable improvement; per-DOY upgrade graduated to v1.2.
+- [ ] Re-run NIWA cross-check — Hauraki Gulf anomaly should move closer to NIWA's forecast (manual)
 
 ### Visual: 60-day sparkline per card _(highest engagement lift)_
 
@@ -138,6 +139,7 @@ Ideas we explored but decided against or deferred:
 - **Using NIWA OISST v2.1 directly** — CoastWatch / PolarWatch ERDDAP endpoints timed out consistently from this host. Revisit if PIFSC CoralTemp becomes unreliable or if NIWA publishes an authenticated API.
 - **Subsurface temperature (Moana Project Mangōpare sensors)** — sparse, irregular, vessel-track data. Not a good fit for a "current SST per region" grid. Potentially useful for v2 as a "depth stratification" side panel.
 - **Switching live SST to CoralTemp** — tried during v1. PIFSC ERDDAP strictly serialises requests (429 Too Many Requests), giving 3–10 min first-load latencies. Open-Meteo won on ergonomics; calibration closes the gap.
+- **Re-investigate NOAA OISST v2.1 as live + climatology source.** NIWA uses this product, so adopting it directly would eliminate the cross-product calibration entirely. Previously blocked by CoastWatch/PolarWatch ERDDAP timeouts and NCEI's post-2020-only window (CLAUDE.md gotchas). Worth a fresh attempt: try alternate ERDDAP mirrors (NOAA NCEP, ESRL PSL THREDDS, the AWS Open Data registry's `noaa-oisst-avhrr` S3 bucket — daily NetCDF files going back to 1981, no rate limits). If S3 works we get a single-source pipeline and can retire the calibration step entirely. Bigger upside than per-DOY calibration tweaks.
 
 ---
 
@@ -155,3 +157,4 @@ Decisions we'd like input on, surfaced so they don't fester:
 ## Changelog
 
 - **2026-04-17** — v1.0 built and committed locally (4 commits on `main`). Working tree clean; awaiting push to GitHub + Vercel deploy.
+- **2026-04-17** — v1.1 calibration pass: cross-product scalar offset (Open-Meteo − CoralTemp) computed offline per region and applied at request time, closing the v1.0 anomaly-bias caveat. Stationarity diagnostic emitted alongside; all 10 regions flagged with non-trivial seasonal residuals, so per-DOY upgrade is now an explicit v1.2 candidate. NIWA cross-check (manual) still pending.

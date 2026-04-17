@@ -1,0 +1,12 @@
+{
+  "regionId": "foveaux-strait",
+  "offset": -0.2696808510638301,
+  "n": 94,
+  "window": {
+    "start": "2026-01-12",
+    "end": "2026-04-15"
+  },
+  "ctResolvedLat": -46.625,
+  "ctResolvedLon": 168.125,
+  "computedAt": "2026-04-17T01:53:13.158Z"
+}

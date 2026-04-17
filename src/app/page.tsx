@@ -1,6 +1,7 @@
 import { regions } from "@/lib/regions";
 import { fetchAllSst } from "@/lib/sst";
 import { loadClimatology } from "@/lib/climatology";
+import { loadCalibration } from "@/lib/calibration";
 import { classifyRegion, type RegionState } from "@/lib/hobday";
 import { RegionCard } from "@/components/RegionCard";
 
@@ -9,13 +10,14 @@ import { RegionCard } from "@/components/RegionCard";
 export const revalidate = 3600;
 
 export default async function Home() {
-  const [sstSeries, climos] = await Promise.all([
+  const [sstSeries, climos, calibrations] = await Promise.all([
     fetchAllSst(regions),
     Promise.all(regions.map((r) => loadClimatology(r.id))),
+    Promise.all(regions.map((r) => loadCalibration(r.id))),
   ]);
 
   const states: RegionState[] = sstSeries.map((sst, i) =>
-    classifyRegion(sst, climos[i]),
+    classifyRegion(sst, climos[i], calibrations[i]),
   );
 
   // Headline computation
@@ -153,12 +155,22 @@ export default async function Home() {
             </code>
             .
           </p>
-          <p className="mt-2 text-xs text-slate-500 dark:text-slate-500">
-            <em>Note on hybrid sources:</em> live SST comes from Open-Meteo
-            and the climatology from CoralTemp. These may differ by
-            ~0.0-0.3°C for the same pixel, producing a small systematic
-            anomaly offset. A per-region calibration against overlapping
-            CoralTemp history is queued for v1.1.
+          <p className="mt-2">
+            <strong>Cross-product calibration:</strong> live SST
+            (Open-Meteo) and the climatology (CoralTemp) come from
+            different products that can disagree by ~0.0–0.3 °C for
+            the same pixel. A per-region scalar offset is computed
+            offline from the most recent overlapping ~90-day window
+            and subtracted from live SST before classification. Build
+            script at{" "}
+            <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] dark:bg-slate-800">
+              scripts/build-calibration.ts
+            </code>
+            ; per-region offsets in{" "}
+            <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] dark:bg-slate-800">
+              data/calibration/
+            </code>
+            .
           </p>
           <p className="mt-2">
             <strong>Classification:</strong>{" "}

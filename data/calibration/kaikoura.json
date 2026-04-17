@@ -1,0 +1,12 @@
+{
+  "regionId": "kaikoura",
+  "offset": -0.41606382978723444,
+  "n": 94,
+  "window": {
+    "start": "2026-01-12",
+    "end": "2026-04-15"
+  },
+  "ctResolvedLat": -42.625,
+  "ctResolvedLon": 173.875,
+  "computedAt": "2026-04-17T01:53:08.600Z"
+}

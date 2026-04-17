@@ -1,0 +1,12 @@
+{
+  "regionId": "tasman-bay",
+  "offset": 0.162446808510638,
+  "n": 94,
+  "window": {
+    "start": "2026-01-12",
+    "end": "2026-04-15"
+  },
+  "ctResolvedLat": -40.625,
+  "ctResolvedLon": 172.875,
+  "computedAt": "2026-04-17T01:53:07.474Z"
+}

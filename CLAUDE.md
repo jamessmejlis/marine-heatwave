@@ -82,9 +82,9 @@ Category by multiplier of the (90th percentile − climatology) anomaly:
 
 ## Working in this repo
 
-**Dev:** `bun run dev` · `bun run build` · `bun run scripts/build-climatology.ts` (only when regions or reference period change — takes 35–60 min, pass `--force` to rebuild existing CSVs)
+**Dev:** `bun run dev` · `bun run build` · `bun run build-climatology` (only when regions or reference period change — takes 35–60 min, pass `--force` to rebuild existing CSVs) · `bun run build-calibration` (re-run any time to refresh cross-product offsets — takes ~1–2 min, always overwrites)
 
-**Architecture:** `src/lib/` data layer · `src/app/` routes · `src/components/` UI · `scripts/` offline tools · `data/climatology/*.csv` pre-built Hobday baselines (committed artifacts, don't regenerate casually). Server components throughout; 1h ISR via `export const revalidate = 3600`.
+**Architecture:** `src/lib/` data layer · `src/app/` routes · `src/components/` UI · `scripts/` offline tools · `data/climatology/*.csv` pre-built Hobday baselines · `data/calibration/*.json` per-region Open-Meteo↔CoralTemp scalar offsets (both committed artifacts, don't regenerate casually). Server components throughout; 1h ISR via `export const revalidate = 3600`.
 
 **Plan tracking:** [`ROADMAP.md`](ROADMAP.md) is the single source of truth — update its changelog when shipping.
 
@@ -98,7 +98,7 @@ Category by multiplier of the (90th percentile − climatology) anomaly:
 
 ## Gotchas
 
-- `src/lib/climatology.ts` caches in a module-level `Map` — **restart the dev server** after dropping/changing climatology CSVs; HMR alone won't clear it.
-- Live SST and climatology come from different products → ~0–0.3 °C anomaly offset. Documented in the footer; calibration pass is the v1.1 priority.
+- `src/lib/climatology.ts` and `src/lib/calibration.ts` both cache in module-level `Map`s — **restart the dev server** after dropping/changing climatology CSVs or calibration JSONs; HMR alone won't clear them.
+- Live SST and climatology come from different products → ~0–0.3 °C systematic offset. Corrected at request time via the per-region scalar in `data/calibration/<region-id>.json`, applied in `src/lib/hobday.ts:buildSeries`.
 - `AbortSignal.timeout(N)` covers response time only — Undici's default **connect timeout is 10s** and is separate. ERDDAP connects can exceed that under load.
 - Scaffolding Next.js into the repo root required moving `CLAUDE.md` aside temporarily (`create-next-app` refuses to scaffold into a non-empty dir).

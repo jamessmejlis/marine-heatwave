@@ -1,0 +1,12 @@
+{
+  "regionId": "northland",
+  "offset": 0.09255319148936135,
+  "n": 94,
+  "window": {
+    "start": "2026-01-12",
+    "end": "2026-04-15"
+  },
+  "ctResolvedLat": -35.125,
+  "ctResolvedLon": 174.125,
+  "computedAt": "2026-04-17T01:53:01.739Z"
+}
