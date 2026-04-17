@@ -48,12 +48,12 @@ Small changes that close the transparency gap and add one high-signal visual. Ta
 - [x] **Diagnostic emitted alongside:** `data/calibration/_diagnostic.json` carries per-region weekly residuals + linear slope of `(OM − CT)` across the window. Build-time only, drives the v1.2 decision on whether scalar correction needs to graduate to per-DOY. On first run all 10 regions flagged with seasonal residual range > 0.4 °C — scalar shipped as the v1.1 minimum-viable improvement; per-DOY upgrade graduated to v1.2.
 - [ ] Re-run NIWA cross-check — Hauraki Gulf anomaly should move closer to NIWA's forecast (manual)
 
-### Visual: 60-day sparkline per card _(highest engagement lift)_
+### Visual: 60-day sparkline per card _(shipped)_
 
-- [ ] Tiny inline SVG below the SST number — 60 days of daily SST with horizontal baseline (seas) and threshold reference lines
-- [ ] Colour the fill orange above threshold, grey below
-- [ ] No JS — pure SVG from the server component
-- [ ] Accessibility: `<title>` with textual summary ("60-day SST trend: rose from X to Y, N days above threshold")
+- [x] Inline SVG below the heatwave-status line — last 60 days of daily SST with seas + threshold reference lines as flat dashed lines at the median climatology over the window. Component at [`src/components/Sparkline.tsx`](src/components/Sparkline.tsx), wired in [`src/components/RegionCard.tsx`](src/components/RegionCard.tsx).
+- [x] Orange filled band where SST is above threshold; subtle blue tint where SST is below baseline (cool-spell hint at near-zero cost)
+- [x] No JS — pure server-rendered SVG, deterministic geometry, dark-mode aware via Tailwind utility classes on `<path>`/`<line>`
+- [x] Accessibility: `role="img"` + `aria-labelledby` linking to a `<title>` like *"60-day SST trend for Hauraki Gulf: 2026-02-16 to 2026-04-17. SST ranged from 18.4°C to 21.2°C. 12 days above threshold."*
 
 ### Cross-check lab
 
@@ -158,3 +158,4 @@ Decisions we'd like input on, surfaced so they don't fester:
 
 - **2026-04-17** — v1.0 built and committed locally (4 commits on `main`). Working tree clean; awaiting push to GitHub + Vercel deploy.
 - **2026-04-17** — v1.1 calibration pass: cross-product scalar offset (Open-Meteo − CoralTemp) computed offline per region and applied at request time, closing the v1.0 anomaly-bias caveat. Stationarity diagnostic emitted alongside; all 10 regions flagged with non-trivial seasonal residuals, so per-DOY upgrade is now an explicit v1.2 candidate. NIWA cross-check (manual) still pending.
+- **2026-04-17** — v1.1 sparklines: 60-day inline SST sparkline added to each region card. Pure server-rendered SVG (no client JS), reference lines for seas + threshold, orange fill above threshold, blue tint below baseline, accessible `<title>` summary.

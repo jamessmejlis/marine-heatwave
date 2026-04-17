@@ -1,4 +1,7 @@
 import type { RegionState } from "@/lib/hobday";
+import { Sparkline } from "@/components/Sparkline";
+
+const SPARKLINE_DAYS = 60;
 
 /**
  * Category → Tailwind colour tokens.
@@ -35,7 +38,8 @@ const categoryStyles: Record<
 };
 
 export function RegionCard({ state }: { state: RegionState }) {
-  const { region, latest, activeEvent, hasClimatology } = state;
+  const { region, latest, activeEvent, hasClimatology, series } = state;
+  const sparkSeries = series.slice(-SPARKLINE_DAYS);
 
   const sstStr = latest?.sst?.toFixed(1) ?? "—";
   const anomaly = latest?.anomaly;
@@ -127,10 +131,25 @@ export function RegionCard({ state }: { state: RegionState }) {
           ) : null}
         </div>
 
+        {hasClimatology && sparkSeries.length > 0 && (
+          <div className="mt-3">
+            <Sparkline
+              series={sparkSeries}
+              regionName={region.name}
+              regionId={region.id}
+            />
+          </div>
+        )}
+
         {latest?.thresh !== null && latest?.thresh !== undefined && latest.seas !== null && latest.seas !== undefined && (
-          <div className="mt-3 border-t border-slate-100 pt-2 font-mono text-[10px] tabular-nums text-slate-400 dark:border-slate-800 dark:text-slate-600">
-            baseline {latest.seas.toFixed(1)}° · threshold{" "}
-            {latest.thresh.toFixed(1)}°
+          <div className="mt-3 border-t border-slate-100 pt-2 font-mono text-[10px] tabular-nums text-slate-400 dark:border-slate-800 dark:text-slate-500">
+            <span className="text-slate-400 dark:text-slate-500">
+              30-yr baseline {latest.seas.toFixed(1)}°
+            </span>{" "}
+            ·{" "}
+            <span className="text-orange-400 dark:text-orange-500">
+              heatwave threshold {latest.thresh.toFixed(1)}°
+            </span>
           </div>
         )}
       </div>
