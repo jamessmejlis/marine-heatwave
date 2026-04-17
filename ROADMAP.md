@@ -60,13 +60,13 @@ Small changes that close the transparency gap and add one high-signal visual. Ta
 - [ ] Write `scripts/cross-check-niwa.ts` — pulls NIWA's published coastal SST anomaly table and compares to our values, reports per-region deltas
 - [ ] Run weekly via a GitHub Action, post a summary comment / Slack / email if any region drifts >0.5 °C
 
-### Accessibility + polish
+### Accessibility + polish _(shipped)_
 
-- [ ] Don't rely on colour alone — category chips already carry text, but verify the top bar has a non-colour signal (icon? pattern?) for colour-blind users
-- [ ] OG image + favicon (Marulho ocean gradient, region grid thumbnail)
-- [ ] Meta description pulled from headline stat
-- [ ] Sitemap + robots.txt (Next.js app-router convention)
-- [ ] Add `lang="en-NZ"` to `<html>`
+- [x] Active-heatwave category bars carry a diagonal hazard-stripe overlay in addition to colour, so the "ongoing heatwave" signal reads in greyscale and for deuteranopic/protanopic users. Each card also carries an `sr-only` sentence describing the bar state for screen readers.
+- [x] Dynamic OG image at [`src/app/opengraph-image.tsx`](src/app/opengraph-image.tsx) via `next/og` `ImageResponse` — slate → cyan → sky gradient with the live headline sentence baked in, 1200×630, revalidated on the same ISR cycle as the page. Favicon at [`src/app/favicon.ico`](src/app/favicon.ico) picked up by Next app-router convention.
+- [x] `generateMetadata` in [`src/app/page.tsx`](src/app/page.tsx) pulls the live headline via [`src/lib/headline.ts`](src/lib/headline.ts) so shared links show current conditions, not a generic fallback.
+- [x] [`src/app/sitemap.ts`](src/app/sitemap.ts) + [`src/app/robots.ts`](src/app/robots.ts) via Next app-router conventions; both read the base URL from [`src/lib/site.ts`](src/lib/site.ts) (`NEXT_PUBLIC_SITE_URL`, default `https://marine-heatwave.marulho.app`).
+- [x] `<html lang="en-NZ">` + `locale: "en_NZ"` in OpenGraph metadata.
 
 ---
 
@@ -159,3 +159,4 @@ Decisions we'd like input on, surfaced so they don't fester:
 - **2026-04-17** — v1.0 built and committed locally (4 commits on `main`). Working tree clean; awaiting push to GitHub + Vercel deploy.
 - **2026-04-17** — v1.1 calibration pass: cross-product scalar offset (Open-Meteo − CoralTemp) computed offline per region and applied at request time, closing the v1.0 anomaly-bias caveat. Stationarity diagnostic emitted alongside; all 10 regions flagged with non-trivial seasonal residuals, so per-DOY upgrade is now an explicit v1.2 candidate. NIWA cross-check (manual) still pending.
 - **2026-04-17** — v1.1 sparklines: 60-day inline SST sparkline added to each region card. Pure server-rendered SVG (no client JS), reference lines for seas + threshold, orange fill above threshold, blue tint below baseline, accessible `<title>` summary.
+- **2026-04-17** — v1.1 accessibility + polish: `lang="en-NZ"`, dynamic OG image + meta description from live headline, sitemap + robots via app-router conventions, non-colour hazard-stripe signal on active-heatwave bars plus `sr-only` state labels. Last v1.1 blocker before the Vercel push.

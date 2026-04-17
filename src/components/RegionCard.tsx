@@ -4,6 +4,16 @@ import { Sparkline } from "@/components/Sparkline";
 const SPARKLINE_DAYS = 60;
 
 /**
+ * Diagonal hazard-stripe overlay for active-heatwave category bars. The
+ * category colour still encodes severity; stripes add a *non-colour*
+ * signal that "a heatwave is ongoing", which reads in greyscale,
+ * printouts, and for deuteranopic/protanopic users. Applied via inline
+ * style so it layers cleanly over the existing Tailwind colour class.
+ */
+const ACTIVE_EVENT_STRIPES =
+  "repeating-linear-gradient(45deg, rgba(0,0,0,0) 0 4px, rgba(0,0,0,0.25) 4px 8px)";
+
+/**
  * Category → Tailwind colour tokens.
  * Using arbitrary-value classes for ringing the top bar; the card body stays
  * neutral so the data doesn't scream. Colour logic:
@@ -53,9 +63,24 @@ export function RegionCard({ state }: { state: RegionState }) {
         ? "bg-yellow-200"
         : "bg-sky-300";
 
+  const barStateLabel = activeEvent
+    ? `Active ${activeEvent.category.toLowerCase()} marine heatwave, day ${activeEvent.duration}.`
+    : aboveThresh
+      ? "Sea temperature above the 90th-percentile threshold, but not yet a qualifying heatwave."
+      : anomaly !== null && anomaly !== undefined && anomaly > 0
+        ? "Sea temperature above climatological baseline."
+        : hasClimatology
+          ? "Sea temperature at or below climatological baseline."
+          : "";
+
   return (
     <article className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      <div className={`h-1.5 ${barStyle}`} />
+      <div
+        aria-hidden="true"
+        className={`h-1.5 ${barStyle}`}
+        style={activeEvent ? { backgroundImage: ACTIVE_EVENT_STRIPES } : undefined}
+      />
+      {barStateLabel && <span className="sr-only">{barStateLabel}</span>}
       <div className="p-5">
         <div className="flex items-baseline justify-between gap-2">
           <div>

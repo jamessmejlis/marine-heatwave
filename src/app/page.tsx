@@ -1,24 +1,58 @@
+import type { Metadata } from "next";
 import { regions } from "@/lib/regions";
 import { fetchAllSst } from "@/lib/sst";
 import { loadClimatology } from "@/lib/climatology";
 import { loadCalibration } from "@/lib/calibration";
 import { classifyRegion, type RegionState } from "@/lib/hobday";
+import { buildHeadline } from "@/lib/headline";
 import { RegionCard } from "@/components/RegionCard";
 
 // Revalidate hourly — SST data from Open-Meteo is daily, heatwave status is
 // not a minute-to-minute metric.
 export const revalidate = 3600;
 
-export default async function Home() {
+/**
+ * Fetch live data + classify. Called by both generateMetadata and the page
+ * component; Next's fetch cache and the module-level loader caches dedupe
+ * so this is effectively free to call twice per render.
+ */
+async function getStates(): Promise<RegionState[]> {
   const [sstSeries, climos, calibrations] = await Promise.all([
     fetchAllSst(regions),
     Promise.all(regions.map((r) => loadClimatology(r.id))),
     Promise.all(regions.map((r) => loadCalibration(r.id))),
   ]);
-
-  const states: RegionState[] = sstSeries.map((sst, i) =>
+  return sstSeries.map((sst, i) =>
     classifyRegion(sst, climos[i], calibrations[i]),
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const states = await getStates();
+  const description = buildHeadline(states);
+  // Next replaces nested metadata objects entirely rather than deep-merging.
+  // Return full openGraph/twitter here with only the description changed so
+  // locale, siteName, card type, etc. set in layout.tsx survive.
+  return {
+    description,
+    openGraph: {
+      title: "Marine Heatwave Live NZ",
+      description,
+      url: "/",
+      siteName: "Marulho · Marine Heatwave Live NZ",
+      locale: "en_NZ",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Marine Heatwave Live NZ",
+      description,
+    },
+  };
+}
+
+export default async function Home() {
+  const states = await getStates();
 
   // Headline computation
   const activeHeatwaves = states.filter((s) => s.activeEvent !== null);
