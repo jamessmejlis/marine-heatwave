@@ -79,3 +79,26 @@ Category by multiplier of the (90th percentile − climatology) anomaly:
 - Honest, screenshot-able on mobile
 - Correct Hobday classification cross-checked against at least one published NIWA heatwave alert
 - Survives the next heat spike as a linkable artifact
+
+## Working in this repo
+
+**Dev:** `bun run dev` · `bun run build` · `bun run scripts/build-climatology.ts` (only when regions or reference period change — takes 35–60 min, pass `--force` to rebuild existing CSVs)
+
+**Architecture:** `src/lib/` data layer · `src/app/` routes · `src/components/` UI · `scripts/` offline tools · `data/climatology/*.csv` pre-built Hobday baselines (committed artifacts, don't regenerate casually). Server components throughout; 1h ISR via `export const revalidate = 3600`.
+
+**Plan tracking:** [`ROADMAP.md`](ROADMAP.md) is the single source of truth — update its changelog when shipping.
+
+**TypeScript:** no `esModuleInterop` — use `import * as fs from "node:fs/promises"`, never `import fs from ...`.
+
+## Data sources — what works
+
+- **Live SST → Open-Meteo Marine API.** Free, CC-BY, no key, parallel-friendly.
+- **30-year climatology → NOAA CoralTemp v3.1 via [PIFSC ERDDAP](https://oceanwatch.pifsc.noaa.gov/erddap/griddap/CRW_sst_v3_1.html).** Strictly serial — returns 429 on parallel requests. Use 10-year chunks (~110s each) with retry-and-backoff.
+- **Known-broken (don't retry these without cause):** CoastWatch PFEG / PolarWatch ERDDAP (timeout from this host), NCEI `ncdc_oisst_v2_avhrr_*` ERDDAP (only goes back to 2020), marineheatwaves.org tracker (UI-only CSV download, no API), Open-Meteo archive-api SST (nulls at coastal NZ pixels pre-2023).
+
+## Gotchas
+
+- `src/lib/climatology.ts` caches in a module-level `Map` — **restart the dev server** after dropping/changing climatology CSVs; HMR alone won't clear it.
+- Live SST and climatology come from different products → ~0–0.3 °C anomaly offset. Documented in the footer; calibration pass is the v1.1 priority.
+- `AbortSignal.timeout(N)` covers response time only — Undici's default **connect timeout is 10s** and is separate. ERDDAP connects can exceed that under load.
+- Scaffolding Next.js into the repo root required moving `CLAUDE.md` aside temporarily (`create-next-app` refuses to scaffold into a non-empty dir).
