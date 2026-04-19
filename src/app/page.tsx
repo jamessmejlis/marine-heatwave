@@ -71,10 +71,10 @@ export default async function Home() {
     <div className="flex flex-col flex-1">
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10 sm:px-8 sm:py-14">
         <header className="mb-10">
-          <div className="flex items-center gap-2 text-xs font-semibold tracking-widest text-slate-500 uppercase dark:text-slate-400">
-            <span>Marulho · Marine Heatwave Live NZ</span>
+          <div className="flex items-center gap-2 font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase">
+            <span>41°S · Marulho · Marine Heatwave Live NZ</span>
           </div>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl dark:text-slate-50">
+          <h1 className="font-serif mt-4 text-4xl leading-[1.02] tracking-tight text-ink sm:text-[56px]">
             Sea temperature, honestly reported.
           </h1>
           <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
@@ -83,11 +83,48 @@ export default async function Home() {
             Hobday marine-heatwave definition.
           </p>
 
-          {/* Headline stat */}
-          <div className="mt-6 rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <section
+            aria-labelledby="explainer-heading"
+            className="mt-6 max-w-2xl"
+          >
+            <h2
+              id="explainer-heading"
+              className="font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase"
+            >
+              What's a marine heatwave?
+            </h2>
+            <p className="mt-2 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+              A stretch of ≥5 consecutive days when sea-surface temperature
+              exceeds the 90th percentile of the 30-year local baseline — the{" "}
+              <a
+                href="https://www.marineheatwaves.org/mhw-overview.html"
+                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              >
+                Hobday et al. (2016)
+              </a>{" "}
+              definition. A different kind of extreme weather: slower, larger,
+              and often invisible from shore.
+            </p>
+            <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+              Documented impacts from past events around Aotearoa and elsewhere
+              include kelp forest die-off, coral bleaching, disrupted fisheries,
+              and shifts in where species can survive. This page reports the
+              data so anyone can see when local conditions cross into heatwave
+              territory — interpretation of what it means for any specific
+              ecosystem belongs with marine biologists, not us.
+            </p>
+          </section>
+
+          {/* Headline stat — editorial treatment, dashed rule echoes the
+              sparkline reference lines (visual through-line). */}
+          <div
+            className="mt-8 border-t border-dashed border-marulho/40 pt-6"
+            aria-hidden="true"
+          />
+          <div>
             {activeHeatwaves.length > 0 ? (
-              <p className="text-lg leading-snug text-slate-800 dark:text-slate-100">
-                <span className="font-semibold">
+              <p className="font-serif text-2xl leading-snug text-ink sm:text-[28px]">
+                <span className="font-semibold text-marulho tabular-nums">
                   {activeHeatwaves.length}
                 </span>{" "}
                 {activeHeatwaves.length === 1 ? "region" : "regions"} currently
@@ -95,29 +132,34 @@ export default async function Home() {
                 {longestActive && (
                   <>
                     {" "}Longest active event:{" "}
-                    <span className="font-semibold">
+                    <span className="font-semibold text-marulho tabular-nums">
                       {longestActive.activeEvent!.duration} days
                     </span>{" "}
-                    in {longestActive.region.name} ({longestActive.activeEvent!.category}{" "}
-                    category).
+                    in{" "}
+                    <span className="underline decoration-marulho decoration-2 underline-offset-4">
+                      {longestActive.region.name}
+                    </span>{" "}
+                    ({longestActive.activeEvent!.category} category).
                   </>
                 )}
               </p>
             ) : (
-              <p className="text-lg leading-snug text-slate-800 dark:text-slate-100">
+              <p className="font-serif text-2xl leading-snug text-ink sm:text-[28px]">
                 No regions currently meet Hobday marine-heatwave criteria.
               </p>
             )}
             {latestDate && (
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Latest observation: {latestDate} · live SST from{" "}
+              <p className="mt-3 font-mono text-xs tracking-wide text-ink/60">
+                Latest observation:{" "}
+                <span className="text-ink/80">{latestDate}</span> — live SST
+                from{" "}
                 <a
                   href="https://open-meteo.com/en/docs/marine-weather-api"
-                  className="underline hover:text-slate-700 dark:hover:text-slate-200"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
                 >
                   Open-Meteo Marine API
                 </a>{" "}
-                · climatology from NOAA CoralTemp (1991–2020)
+                — climatology from NOAA CoralTemp (1991–2020)
               </p>
             )}
           </div>
@@ -149,15 +191,15 @@ export default async function Home() {
           </section>
         )}
 
-        <footer className="mt-16 border-t border-slate-200 pt-8 text-sm leading-relaxed text-slate-600 dark:border-slate-800 dark:text-slate-400">
-          <h2 className="mb-2 text-xs font-semibold tracking-widest uppercase text-slate-500 dark:text-slate-400">
+        <footer className="mt-16 border-t border-dashed border-marulho/30 pt-8 text-sm leading-relaxed text-ink/70">
+          <h2 className="mb-3 font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase">
             Methodology & sources
           </h2>
           <p>
             <strong>Live SST:</strong> daily mean from the{" "}
             <a
               href="https://open-meteo.com/en/docs/marine-weather-api"
-              className="underline hover:text-slate-900 dark:hover:text-slate-100"
+              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
             >
               Open-Meteo Marine API
             </a>{" "}
@@ -170,7 +212,7 @@ export default async function Home() {
             heatwave threshold computed locally from{" "}
             <a
               href="https://coralreefwatch.noaa.gov/product/5km/index.php"
-              className="underline hover:text-slate-900 dark:hover:text-slate-100"
+              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
             >
               NOAA Coral Reef Watch CoralTemp v3.1
             </a>{" "}
@@ -178,7 +220,7 @@ export default async function Home() {
             accessed via{" "}
             <a
               href="https://oceanwatch.pifsc.noaa.gov/erddap/griddap/CRW_sst_v3_1.html"
-              className="underline hover:text-slate-900 dark:hover:text-slate-100"
+              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
             >
               PIFSC ERDDAP
             </a>
@@ -210,7 +252,7 @@ export default async function Home() {
             <strong>Classification:</strong>{" "}
             <a
               href="https://www.marineheatwaves.org/mhw-overview.html"
-              className="underline hover:text-slate-900 dark:hover:text-slate-100"
+              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
             >
               Hobday et al. (2016, 2018)
             </a>
@@ -223,7 +265,7 @@ export default async function Home() {
             <strong>Cross-referenced against:</strong>{" "}
             <a
               href="https://niwa.co.nz/oceans/marine-heatwaves"
-              className="underline hover:text-slate-900 dark:hover:text-slate-100"
+              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
             >
               NIWA's marine heatwave programme
             </a>

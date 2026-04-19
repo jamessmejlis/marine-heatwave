@@ -84,7 +84,7 @@ export function RegionCard({ state }: { state: RegionState }) {
       <div className="p-5">
         <div className="flex items-baseline justify-between gap-2">
           <div>
-            <h3 className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-50">
+            <h3 className="font-serif text-xl leading-tight tracking-tight text-ink">
               {region.name}
             </h3>
             {region.altName && (
