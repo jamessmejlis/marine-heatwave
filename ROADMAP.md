@@ -32,7 +32,7 @@ These are documented in the footer for public transparency but are also our back
 - **Cross-product anomaly offset.** Live SST comes from Open-Meteo (underlying product likely CMEMS GLORYS or similar), climatology from CoralTemp. Same pixel, different product — estimated 0.0–0.3 °C systematic offset. Risk: borderline heatwaves may be over- or under-reported. Fix queued in v1.1.
 - **Resolution mismatch vs NIWA.** NIWA uses OISST v2.1 at 25 km, we use CoralTemp at 5 km. Heatwave detections should agree at a daily scale but precise anomaly numbers may drift by ~0.1–0.3 °C. Acceptable for a consumer dashboard; worth noting on a `/methodology` page when we build one.
 - **Pixel placement.** Each region is a single 5-km grid cell picked by us for a plausible sea location. Some regions are dynamic (Cook Strait, Foveaux) where a single pixel can be non-representative. Fix considered: 3×3 regional average per region, weighted to sea pixels only.
-- **v1 Hauraki Gulf showed −0.0 °C anomaly** on ship day while NIWA forecast median was +0.75 °C for adjacent Coromandel. Likely product-offset + recent cooling. Re-check after calibration lands.
+- **v1 Hauraki Gulf showed −0.0 °C anomaly** on ship day while NIWA forecast median was +0.75 °C for adjacent Coromandel. Likely product-offset + recent cooling. Re-check after calibration lands. **Update 2026-04-19:** post-calibration anomaly moved to −0.7 °C — *further* from NIWA's forecast, not closer. Now understood as a category mismatch: NIWA's published product is a monthly *forecast* outlook (rolling 6-month, 10-model ensemble), not a current observation. NIWA doesn't publish current-actuals at consumer scale — that's the gap this project fills (see [Scope discipline in CLAUDE.md](CLAUDE.md)). The residual gap is OISST-vs-CoralTemp resolution + product, plus the comparison was never apples-to-apples. Replacement sanity-check against NOAA CRW queued in the Cross-check lab below.
 
 ---
 
@@ -46,7 +46,7 @@ Small changes that close the transparency gap and add one high-signal visual. Ta
 - [x] At request time, [`src/lib/calibration.ts`](src/lib/calibration.ts) loader returns the offset; [`src/lib/hobday.ts:buildSeries`](src/lib/hobday.ts) subtracts it from raw SST before all comparison to climatology (anomaly, threshold, category, displayed °C)
 - [x] Footer copy: dropped the "hybrid sources" caveat paragraph; methodology section now describes the calibration pipeline
 - [x] **Diagnostic emitted alongside:** `data/calibration/_diagnostic.json` carries per-region weekly residuals + linear slope of `(OM − CT)` across the window. Build-time only, drives the v1.2 decision on whether scalar correction needs to graduate to per-DOY. On first run all 10 regions flagged with seasonal residual range > 0.4 °C — scalar shipped as the v1.1 minimum-viable improvement; per-DOY upgrade graduated to v1.2.
-- [ ] Re-run NIWA cross-check — Hauraki Gulf anomaly should move closer to NIWA's forecast (manual)
+- ~~Re-run NIWA cross-check — Hauraki Gulf anomaly should move closer to NIWA's forecast (manual)~~ — **closed 2026-04-19**, category mismatch: see Known v1.0 caveats above. Replaced by the NOAA CRW pipeline sanity-check in the Cross-check lab below.
 
 ### Visual: 60-day sparkline per card _(shipped)_
 
@@ -59,8 +59,9 @@ Small changes that close the transparency gap and add one high-signal visual. Ta
 
 ### Cross-check lab
 
-- [ ] Write `scripts/cross-check-niwa.ts` — pulls NIWA's published coastal SST anomaly table and compares to our values, reports per-region deltas
-- [ ] Run weekly via a GitHub Action, post a summary comment / Slack / email if any region drifts >0.5 °C
+- ~~Write `scripts/cross-check-niwa.ts` — pulls NIWA's published coastal SST anomaly table and compares to our values, reports per-region deltas~~ — **abandoned 2026-04-19**. NIWA's published product is a monthly forecast outlook, not a real-time anomaly table. No clean source to scrape against; the cross-check premise was a category mismatch from the start.
+- [ ] **Pipeline sanity-check against NOAA CRW.** Write `scripts/sanity-check-noaa-crw.ts` that pulls NOAA Coral Reef Watch's official daily heatwave classification (the authoritative use of CoralTemp v3.1, the same product as our climatology) for each region's pixel, compares to our classification + anomaly. Should agree closely — drift indicates a bug in our Hobday implementation or in how the calibration scalar is applied, not a cross-product gap. Stronger signal than the abandoned NIWA check would have provided, since we're testing our own pipeline against the canonical use of the underlying data.
+- [ ] Run sanity-check weekly via a GitHub Action, post a summary if any region's classification or anomaly drifts more than ~0.2 °C from CRW's published value.
 
 ### Accessibility + polish _(shipped)_
 
@@ -91,11 +92,13 @@ Originally not a planned milestone — surfaced during a `/frontend-design` revi
 
 The artifacts that turn the dashboard from a thing-you-check into a thing-you-link-to.
 
-### `/methodology` deep-link page
+### Methodology, sources & acknowledgements _(shipped — folded into main page)_
 
-- [ ] One-page explainer: Hobday definition, category multipliers, data lineage, why CoralTemp, why 1991–2020 baseline, why not NIWA data directly
-- [ ] Embed the cross-check table (regenerated on each build)
-- [ ] Acknowledge Hobday, Oliver, Schlegel (tracker author), NOAA CRW, Open-Meteo
+Originally scoped as a separate `/methodology` route. Reconsidered: a data/portfolio piece works better as a single linkable page, and the existing editorial register supports reference material below the fold without it competing with the live numbers. So the content lives in the main page footer, deep-linkable via anchors rather than a new route.
+
+- [x] Expanded footer on [`src/app/page.tsx`](src/app/page.tsx) with five anchored sub-sections (`#methodology`, `#sources`, `#choices`, `#limitations`, `#acknowledgements`), narrow measure and dashed-teal dividers to read as reference material vs the 6xl card grid above
+- [x] Hobday definition + category math (`#methodology`), data lineage with calibration (`#sources`), the "why" set — why CoralTemp, why 1991–2020, why single pixels (`#choices`), limitations — resolution vs NIWA, pixel representativeness, calibration stationarity, surface-only (`#limitations`), acknowledgements for Hobday, Oliver, Schlegel, NOAA CRW, PIFSC ERDDAP, Open-Meteo, NIWA (`#acknowledgements`)
+- [ ] Embed the cross-check table (regenerated on each build) — blocked on the v1.1 [`scripts/cross-check-niwa.ts`](ROADMAP.md) landing; will slot into `#limitations` or as its own sub-section when it exists
 
 ### Per-region permalinks
 
@@ -125,6 +128,7 @@ Items the CLAUDE.md brief explicitly listed as out-of-scope for v1 but planned.
 - [ ] **Downloadable timeseries** per region (CSV). Trivial once the time slider data exists.
 - [ ] **Email/RSS alerts.** "Subscribe to Hauraki Gulf alerts" — cron job detects category changes, sends digest. Email list becomes the top-of-funnel for the broader Marulho constellation.
 - [ ] **Embeddable widgets** for NZ news sites and NGO partners (see nonprofit embed licensing in project ideas doc). Single-region iframe or script tag.
+- [ ] **Baseline-period toggle.** The 30-year baseline itself drifts as the climate warms — a 1991–2020 reference normalises recent warming away, so today's "moderate" against 1991–2020 might be "severe" against 1961–1990. Pre-build multiple climatology CSVs at the WMO standard normals (1961–1990, 1971–2000, 1981–2010, 1991–2020) plus an early-record window if CoralTemp permits, expose a UI toggle on the dashboard + permalinks, and explain the choice on `/methodology`. Pairs naturally with the historical time slider — both are "see how things have changed" tools. Discipline reminder: present as "different valid choices show different framings", not "the real number is the dramatic one" — published MHW literature has the debate (fixed vs detrended baselines, Hobday 2016 vs Oliver 2021), link it.
 
 ---
 
@@ -181,3 +185,6 @@ Decisions we'd like input on, surfaced so they don't fester:
 - **2026-04-19** — marine heatwave explainer added between H1 and headline stat — gives new visitors conceptual scaffolding (definition + documented impacts + framing-discipline statement) before the live numbers hit.
 - **2026-04-19** — editorial design refresh: Fraunces serif + IBM Plex Sans/Mono typography, Marulho teal signature accent, paper-warm + ink-navy palette, coordinate eyebrow, dashed teal section dividers echoing the sparkline reference lines, subtle SVG paper-grain overlay. Repositions the page from "generic Next.js dashboard" to "published Marulho report".
 - **2026-04-19** — CLAUDE.md updated with the new design tokens, the headline single-source pointer (`src/lib/headline.ts`), and five gotchas surfaced this session (Tailwind v4 dark-mode media-query behaviour, Next.js metadata replace-not-merge, Open-Meteo `past_days=92` actually returns 93 days, SVG hover hit-zone pattern, day-by-day chart references for >30-day windows).
+- **2026-04-19** — explainer copy: scholarly anchor link to the [RSNZ NZ-MHW impacts paper](https://rsnz.onlinelibrary.wiley.com/doi/10.1080/00288330.2024.2436661) on "around Aotearoa", expanded the impact list (kelp die-off, mass mortality, lower oxygen, ocean acidification, fisheries/aquaculture, species shifts, land-heatwave compounding) drawing on NIWA's public framing, added Tasman-Sea scale callout to the first paragraph.
+- **2026-04-19** — NIWA cross-check item closed as a category mismatch; NIWA publishes monthly forecasts, not a real-time anomaly table. Replaced by a queued NOAA CRW pipeline sanity-check (CRW uses the same CoralTemp data we do, so agreement is testable end-to-end). v1.0 caveat annotated to reflect the corrected understanding.
+- **2026-04-19** — methodology content folded into the main page footer as five anchored sub-sections (`#methodology`, `#sources`, `#choices`, `#limitations`, `#acknowledgements`) rather than a separate `/methodology` route. Keeps the FuelClock one-page discipline while making the reference material deep-linkable. Cross-check table embed remains pending on the v1.1 `scripts/cross-check-niwa.ts` script.

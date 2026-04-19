@@ -66,11 +66,11 @@ export function RegionCard({ state }: { state: RegionState }) {
   const barStateLabel = activeEvent
     ? `Active ${activeEvent.category.toLowerCase()} marine heatwave, day ${activeEvent.duration}.`
     : aboveThresh
-      ? "Sea temperature above the 90th-percentile threshold, but not yet a qualifying heatwave."
+      ? "Sea temperature in the warmest 10% for this time of year, but not yet a qualifying heatwave."
       : anomaly !== null && anomaly !== undefined && anomaly > 0
-        ? "Sea temperature above climatological baseline."
+        ? "Sea temperature above the 30-year average."
         : hasClimatology
-          ? "Sea temperature at or below climatological baseline."
+          ? "Sea temperature at or below the 30-year average."
           : "";
 
   return (

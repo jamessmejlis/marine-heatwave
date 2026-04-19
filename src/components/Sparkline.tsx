@@ -246,5 +246,5 @@ function buildSummary(series: DayAssessment[], regionName: string): string {
     aboveCount > 0
       ? ` ${aboveCount} ${aboveCount === 1 ? "day" : "days"} above threshold.`
       : "";
-  return `${series.length}-day SST trend for ${regionName}: ${startDate} to ${endDate}. SST ranged from ${minV.toFixed(1)}°C to ${maxV.toFixed(1)}°C.${aboveSentence}`;
+  return `${series.length}-day sea temperature trend for ${regionName}: ${startDate} to ${endDate}. Sea temperature ranged from ${minV.toFixed(1)}°C to ${maxV.toFixed(1)}°C.${aboveSentence}`;
 }

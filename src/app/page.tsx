@@ -78,9 +78,9 @@ export default async function Home() {
             Sea temperature, honestly reported.
           </h1>
           <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
-            Current sea-surface temperature for 10 NZ coastal regions, compared
-            to the 30-year climatological baseline and classified using the
-            Hobday marine-heatwave definition.
+            Current sea temperature for 10 NZ coastal regions, compared to the
+            30-year average for the same time of year and classified using the
+            standard marine-heatwave definition.
           </p>
 
           <section
@@ -94,8 +94,9 @@ export default async function Home() {
               What's a marine heatwave?
             </h2>
             <p className="mt-2 text-base leading-relaxed text-slate-600 dark:text-slate-300">
-              A stretch of ≥5 consecutive days when sea-surface temperature
-              exceeds the 90th percentile of the 30-year local baseline — the{" "}
+              At least 5 days in a row when the sea is unusually warm for the
+              time of year — specifically, in the warmest 10% of the past
+              30 years' readings for the same calendar date. The standard{" "}
               <a
                 href="https://www.marineheatwaves.org/mhw-overview.html"
                 className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
@@ -103,15 +104,25 @@ export default async function Home() {
                 Hobday et al. (2016)
               </a>{" "}
               definition. A different kind of extreme weather: slower, larger,
-              and often invisible from shore.
+              often invisible from shore — past NZ events have spread thousands
+              of kilometres across the Tasman Sea.
             </p>
             <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
-              Documented impacts from past events around Aotearoa and elsewhere
-              include kelp forest die-off, coral bleaching, disrupted fisheries,
-              and shifts in where species can survive. This page reports the
-              data so anyone can see when local conditions cross into heatwave
-              territory — interpretation of what it means for any specific
-              ecosystem belongs with marine biologists, not us.
+              Documented impacts{" "}
+              <a
+                href="https://rsnz.onlinelibrary.wiley.com/doi/10.1080/00288330.2024.2436661"
+                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              >
+                around Aotearoa
+              </a>{" "}
+              and elsewhere include kelp forest die-off, mass mortality in
+              marine life, lower dissolved oxygen, ocean acidification,
+              disrupted fisheries and aquaculture, and shifts in where species
+              can survive — sometimes compounding with land heatwaves and
+              other climate extremes. This page reports the data so anyone can
+              see when local conditions cross into heatwave territory;
+              interpretation of what it means for any specific ecosystem
+              belongs with marine biologists, not us.
             </p>
           </section>
 
@@ -151,15 +162,15 @@ export default async function Home() {
             {latestDate && (
               <p className="mt-3 font-mono text-xs tracking-wide text-ink/60">
                 Latest observation:{" "}
-                <span className="text-ink/80">{latestDate}</span> — live SST
-                from{" "}
+                <span className="text-ink/80">{latestDate}</span> — live sea
+                temperature from{" "}
                 <a
                   href="https://open-meteo.com/en/docs/marine-weather-api"
                   className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
                 >
                   Open-Meteo Marine API
                 </a>{" "}
-                — climatology from NOAA CoralTemp (1991–2020)
+                — 30-year average from NOAA CoralTemp (1991–2020)
               </p>
             )}
           </div>
@@ -191,94 +202,357 @@ export default async function Home() {
           </section>
         )}
 
-        <footer className="mt-16 border-t border-dashed border-marulho/30 pt-8 text-sm leading-relaxed text-ink/70">
-          <h2 className="mb-3 font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase">
-            Methodology & sources
-          </h2>
-          <p>
-            <strong>Live SST:</strong> daily mean from the{" "}
-            <a
-              href="https://open-meteo.com/en/docs/marine-weather-api"
-              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+        <footer className="mt-16 border-t border-dashed border-marulho/30 pt-10 text-ink/70">
+          <div className="max-w-2xl">
+            <p className="font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase">
+              Reference
+            </p>
+            <p className="mt-3 text-sm leading-relaxed">
+              How this page is built, what it can and can't tell you, and who
+              to thank. Deep-linkable at{" "}
+              <a
+                href="#methodology"
+                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              >
+                #methodology
+              </a>
+              ,{" "}
+              <a
+                href="#sources"
+                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              >
+                #sources
+              </a>
+              ,{" "}
+              <a
+                href="#choices"
+                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              >
+                #choices
+              </a>
+              ,{" "}
+              <a
+                href="#limitations"
+                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              >
+                #limitations
+              </a>
+              ,{" "}
+              <a
+                href="#acknowledgements"
+                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              >
+                #acknowledgements
+              </a>
+              .
+            </p>
+
+            <section
+              id="methodology"
+              aria-labelledby="methodology-heading"
+              className="mt-10 scroll-mt-8"
             >
-              Open-Meteo Marine API
-            </a>{" "}
-            (free, CC-BY, no API key). One grid cell per region, snapped
-            to the nearest marine pixel. Refreshed hourly.
-          </p>
-          <p className="mt-2">
-            <strong>Baseline and threshold:</strong> 30-year seasonal
-            climatology (mean SST per day-of-year) and 90th-percentile
-            heatwave threshold computed locally from{" "}
-            <a
-              href="https://coralreefwatch.noaa.gov/product/5km/index.php"
-              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              <h2
+                id="methodology-heading"
+                className="font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase"
+              >
+                Methodology
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed">
+                <strong>Detection —</strong>{" "}
+                <a
+                  href="https://www.marineheatwaves.org/mhw-overview.html"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  Hobday et al. (2016)
+                </a>
+                : a marine heatwave is ≥5 consecutive days when SST exceeds the
+                90th percentile of the 30-year local day-of-year baseline.
+                Events separated by ≤2 days merge into a single event.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                <strong>Classification —</strong> Hobday et al. (2018): category
+                is the daily anomaly expressed as a multiple of the (threshold
+                − climatology) gap,{" "}
+                <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] dark:bg-slate-800">
+                  floor(1 + (SST − seas) / (thresh − seas))
+                </code>
+                , capped at 4: Moderate (1×), Strong (2×), Severe (3×), Extreme
+                (4×+).
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                Implementation parameters match the{" "}
+                <a
+                  href="https://github.com/ecjoliver/marineHeatWaves"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  ecjoliver/marineHeatWaves
+                </a>{" "}
+                reference defaults: ±5-day DOY pool, 31-day moving-average
+                smoothing on both climatology and threshold, minimum duration 5
+                days, maximum gap 2 days.
+              </p>
+            </section>
+
+            <div
+              className="mt-10 border-t border-dashed border-marulho/20 pt-10"
+              aria-hidden="true"
+            />
+
+            <section
+              id="sources"
+              aria-labelledby="sources-heading"
+              className="scroll-mt-8"
             >
-              NOAA Coral Reef Watch CoralTemp v3.1
-            </a>{" "}
-            daily SST (5 km, 1991–2020, WMO standard reference period),
-            accessed via{" "}
-            <a
-              href="https://oceanwatch.pifsc.noaa.gov/erddap/griddap/CRW_sst_v3_1.html"
-              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              <h2
+                id="sources-heading"
+                className="font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase"
+              >
+                Sources
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed">
+                <strong>Live SST —</strong> daily mean from the{" "}
+                <a
+                  href="https://open-meteo.com/en/docs/marine-weather-api"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  Open-Meteo Marine API
+                </a>{" "}
+                (free, CC-BY, no API key). One grid cell per region, snapped to
+                the nearest marine pixel. Refreshed hourly.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                <strong>Baseline + threshold —</strong> 30-year seasonal
+                climatology and 90th-percentile threshold computed locally from{" "}
+                <a
+                  href="https://coralreefwatch.noaa.gov/product/5km/index.php"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  NOAA Coral Reef Watch CoralTemp v3.1
+                </a>{" "}
+                daily SST (5 km, 1991–2020), accessed via{" "}
+                <a
+                  href="https://oceanwatch.pifsc.noaa.gov/erddap/griddap/CRW_sst_v3_1.html"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  PIFSC ERDDAP
+                </a>
+                . Build script at{" "}
+                <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] dark:bg-slate-800">
+                  scripts/build-climatology.ts
+                </code>
+                .
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                <strong>Cross-product calibration —</strong> live SST
+                (Open-Meteo) and the climatology (CoralTemp) come from different
+                products that can disagree by ~0.0–0.3 °C for the same pixel. A
+                per-region scalar offset is computed offline from the most
+                recent overlapping ~90-day window and subtracted from live SST
+                before classification. Build script at{" "}
+                <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] dark:bg-slate-800">
+                  scripts/build-calibration.ts
+                </code>
+                ; per-region offsets in{" "}
+                <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] dark:bg-slate-800">
+                  data/calibration/
+                </code>
+                .
+              </p>
+            </section>
+
+            <div
+              className="mt-10 border-t border-dashed border-marulho/20 pt-10"
+              aria-hidden="true"
+            />
+
+            <section
+              id="choices"
+              aria-labelledby="choices-heading"
+              className="scroll-mt-8"
             >
-              PIFSC ERDDAP
-            </a>
-            . Parameters match the Hobday et al. (2016) reference: ±5-day
-            DOY pool, 31-day moving-average smoothing. Build script at{" "}
-            <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] dark:bg-slate-800">
-              scripts/build-climatology.ts
-            </code>
-            .
-          </p>
-          <p className="mt-2">
-            <strong>Cross-product calibration:</strong> live SST
-            (Open-Meteo) and the climatology (CoralTemp) come from
-            different products that can disagree by ~0.0–0.3 °C for
-            the same pixel. A per-region scalar offset is computed
-            offline from the most recent overlapping ~90-day window
-            and subtracted from live SST before classification. Build
-            script at{" "}
-            <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] dark:bg-slate-800">
-              scripts/build-calibration.ts
-            </code>
-            ; per-region offsets in{" "}
-            <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] dark:bg-slate-800">
-              data/calibration/
-            </code>
-            .
-          </p>
-          <p className="mt-2">
-            <strong>Classification:</strong>{" "}
-            <a
-              href="https://www.marineheatwaves.org/mhw-overview.html"
-              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              <h2
+                id="choices-heading"
+                className="font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase"
+              >
+                Design choices
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed">
+                <strong>Why CoralTemp for the baseline?</strong> We needed a
+                consistent 30-year daily SST record with clean programmatic
+                access. CoralTemp via PIFSC ERDDAP covers 1985–present at 5 km,
+                reliably. NIWA uses NOAA OISST v2.1 (25 km) for their own
+                heatwave tracker — a strong first choice, but the CoastWatch and
+                PolarWatch ERDDAP endpoints that serve it timed out consistently
+                from our infrastructure. Revisiting via the NOAA AWS S3 mirror
+                is on the roadmap; if it works we'd retire the calibration step
+                entirely.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                <strong>Why the 1991–2020 baseline?</strong> It's the current{" "}
+                <a
+                  href="https://community.wmo.int/en/wmo-standard-climatological-normals"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  WMO standard reference period
+                </a>
+                . Older baselines (1961–1990, 1971–2000) would reclassify some
+                of today's "Moderate" events as "Strong" because they normalise
+                less recent warming — both are valid framings, and published
+                marine-heatwave literature debates fixed vs detrended baselines.
+                A baseline-period toggle is queued for v2.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                <strong>Why single grid cells, not regional averages?</strong>{" "}
+                Each region is one 5-km pixel picked for a plausible offshore
+                location. Simple, reproducible, and easy to audit. For
+                oceanographically mixed regions (Cook Strait, Foveaux) a single
+                pixel can be non-representative; a 3×3 sea-weighted average is a
+                candidate refinement.
+              </p>
+            </section>
+
+            <div
+              className="mt-10 border-t border-dashed border-marulho/20 pt-10"
+              aria-hidden="true"
+            />
+
+            <section
+              id="limitations"
+              aria-labelledby="limitations-heading"
+              className="scroll-mt-8"
             >
-              Hobday et al. (2016, 2018)
-            </a>
-            : a marine heatwave is ≥5 consecutive days of SST above the 90th
-            percentile, with events separated by ≤2 days merged. Categories are
-            multiples of the (threshold − climatology) anomaly: 1× Moderate, 2×
-            Strong, 3× Severe, 4×+ Extreme.
-          </p>
-          <p className="mt-2">
-            <strong>Cross-referenced against:</strong>{" "}
-            <a
-              href="https://niwa.co.nz/oceans/marine-heatwaves"
-              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              <h2
+                id="limitations-heading"
+                className="font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase"
+              >
+                Limitations
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed">
+                <strong>Resolution mismatch vs NIWA —</strong>{" "}
+                <a
+                  href="https://niwa.co.nz/oceans/marine-heatwaves"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  NIWA's marine heatwave programme
+                </a>{" "}
+                uses NOAA OISST v2.1 at 25 km; we use CoralTemp at 5 km (itself
+                built partly on OISST). The Hobday methodology is identical and
+                heatwave detections should agree at a daily scale, but precise
+                anomaly numbers may drift from NIWA's published figures by
+                roughly 0.1–0.3 °C.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                <strong>Pixel representativeness —</strong> a single 5-km cell
+                is a good proxy for a broad coastal region most of the time, but
+                a poor proxy during strong upwelling, frontal movement, or
+                narrow-channel effects. Treat the number as "the sea near here",
+                not "the sea exactly here".
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                <strong>Calibration stationarity —</strong> the Open-Meteo ↔
+                CoralTemp offset is applied as a single scalar per region,
+                assuming the two products drift in parallel across the year.
+                Diagnostics show non-trivial seasonal residuals (&gt;0.4 °C range
+                for all 10 regions), so a per-day-of-year calibration is queued
+                for v1.2. Today's classification is robust to this; borderline
+                events in shoulder seasons may flip category as the refinement
+                lands.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                <strong>Surface only —</strong> SST is a skin temperature. It
+                tells you nothing direct about conditions at depth, where much
+                marine life actually lives. Subsurface observations from the{" "}
+                <a
+                  href="https://www.moanaproject.org/"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  Moana Project
+                </a>{" "}
+                may join a future version.
+              </p>
+            </section>
+
+            <div
+              className="mt-10 border-t border-dashed border-marulho/20 pt-10"
+              aria-hidden="true"
+            />
+
+            <section
+              id="acknowledgements"
+              aria-labelledby="acknowledgements-heading"
+              className="scroll-mt-8"
             >
-              NIWA's marine heatwave programme
-            </a>
-            . NIWA uses NOAA OISST v2.1 (25 km); we use CoralTemp (5 km,
-            partly built on OISST). Anomaly values may differ by
-            ~0.1–0.3°C from NIWA's published figures due to the
-            product-resolution difference, but the Hobday methodology is
-            identical and heatwave detections agree at a daily scale.
-          </p>
-          <p className="mt-6 text-xs text-slate-500 dark:text-slate-500">
-            A Marulho experiment in turning hidden NZ data into single useful
-            answers.
-          </p>
+              <h2
+                id="acknowledgements-heading"
+                className="font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase"
+              >
+                Acknowledgements
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed">
+                The Hobday detection and classification framework is the work of{" "}
+                <a
+                  href="https://doi.org/10.1016/j.pocean.2015.12.014"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  Alistair Hobday and colleagues (2016, 2018)
+                </a>
+                . The reference Python implementation and tracker site are
+                maintained by{" "}
+                <a
+                  href="https://github.com/ecjoliver/marineHeatWaves"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  Eric C. J. Oliver
+                </a>{" "}
+                and{" "}
+                <a
+                  href="https://www.marineheatwaves.org/"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  Robert Schlegel
+                </a>{" "}
+                — our defaults follow theirs.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                Data comes from{" "}
+                <a
+                  href="https://coralreefwatch.noaa.gov/"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  NOAA Coral Reef Watch
+                </a>{" "}
+                (CoralTemp v3.1),{" "}
+                <a
+                  href="https://oceanwatch.pifsc.noaa.gov/erddap/griddap/CRW_sst_v3_1.html"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  NOAA PIFSC OceanWatch ERDDAP
+                </a>
+                , and{" "}
+                <a
+                  href="https://open-meteo.com/"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  Open-Meteo
+                </a>
+                . Cross-referenced against{" "}
+                <a
+                  href="https://niwa.co.nz/oceans/marine-heatwaves"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  NIWA
+                </a>{" "}
+                — the authoritative voice on NZ marine heatwaves. This page is
+                not affiliated with any of them.
+              </p>
+            </section>
+
+            <p className="mt-12 font-mono text-xs tracking-wide text-ink/50">
+              A Marulho experiment in turning hidden NZ data into single useful
+              answers.
+            </p>
+          </div>
         </footer>
       </main>
     </div>
