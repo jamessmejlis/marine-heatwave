@@ -50,10 +50,12 @@ Small changes that close the transparency gap and add one high-signal visual. Ta
 
 ### Visual: 60-day sparkline per card _(shipped)_
 
-- [x] Inline SVG below the heatwave-status line — last 60 days of daily SST with seas + threshold reference lines as flat dashed lines at the median climatology over the window. Component at [`src/components/Sparkline.tsx`](src/components/Sparkline.tsx), wired in [`src/components/RegionCard.tsx`](src/components/RegionCard.tsx).
-- [x] Orange filled band where SST is above threshold; subtle blue tint where SST is below baseline (cool-spell hint at near-zero cost)
-- [x] No JS — pure server-rendered SVG, deterministic geometry, dark-mode aware via Tailwind utility classes on `<path>`/`<line>`
+- [x] Inline SVG below the heatwave-status line — last 60 days of daily SST with **day-by-day** seas + threshold reference paths (initially shipped as flat medians; fixed same day after autumn climatology drift was misplacing today's baseline by ~1°C). Component at [`src/components/Sparkline.tsx`](src/components/Sparkline.tsx), wired in [`src/components/RegionCard.tsx`](src/components/RegionCard.tsx).
+- [x] Orange filled band where SST is above threshold (uses precomputed `DayAssessment.aboveThreshold`); subtle blue tint where SST is below baseline (cool-spell hint at near-zero cost)
+- [x] No JS — pure server-rendered SVG, deterministic geometry, dark-mode aware via Tailwind utility classes on `<path>`
 - [x] Accessibility: `role="img"` + `aria-labelledby` linking to a `<title>` like *"60-day SST trend for Hauraki Gulf: 2026-02-16 to 2026-04-17. SST ranged from 18.4°C to 21.2°C. 12 days above threshold."*
+- [x] Native browser hover tooltips on each reference line via fat invisible hit-zone overlay paths (`stroke="transparent" strokeWidth={8} pointerEvents:"stroke"`) carrying explanatory `<title>` elements — explains what the dashed lines represent on first hover.
+- [x] Card footnote legend (`30-yr baseline X° · heatwave threshold Y°`) colour-matched to the dashed-line colours so the visual mapping is obvious without a separate legend.
 
 ### Cross-check lab
 
@@ -67,6 +69,21 @@ Small changes that close the transparency gap and add one high-signal visual. Ta
 - [x] `generateMetadata` in [`src/app/page.tsx`](src/app/page.tsx) pulls the live headline via [`src/lib/headline.ts`](src/lib/headline.ts) so shared links show current conditions, not a generic fallback.
 - [x] [`src/app/sitemap.ts`](src/app/sitemap.ts) + [`src/app/robots.ts`](src/app/robots.ts) via Next app-router conventions; both read the base URL from [`src/lib/site.ts`](src/lib/site.ts) (`NEXT_PUBLIC_SITE_URL`, default `https://marine-heatwave.marulho.app`).
 - [x] `<html lang="en-NZ">` + `locale: "en_NZ"` in OpenGraph metadata.
+
+### Marine heatwave explainer _(shipped)_
+
+- [x] Two-paragraph "What's a marine heatwave?" block between H1 and headline stat — Hobday definition + documented impacts (kelp, coral, fisheries, species shifts) + framing-discipline statement ("interpretation belongs with marine biologists, not us"). Linked to [Hobday et al. (2016)](https://www.marineheatwaves.org/mhw-overview.html). Gives new visitors conceptual scaffolding before the live numbers.
+
+### Editorial design pass _(shipped)_
+
+Originally not a planned milestone — surfaced during a `/frontend-design` review and shipped because the page was reading as "generic Next.js dashboard" rather than "Marulho report". Worth tracking because future work should match this register.
+
+- [x] Typography: dropped Geist (the Vercel-default fingerprint) for **Fraunces** (variable serif, display) + **IBM Plex Sans** (body) + **IBM Plex Mono** (data + labels). Pulled via `next/font/google`.
+- [x] Marulho colour system: warm paper `#f6f3ee` / deep midnight `#04101c`, ink navy / bone-warm body, **Marulho teal `#1d6f6a`** as the signature brand accent on links, key numbers, section labels, dashed dividers. Defined as Tailwind v4 design tokens (`text-ink`, `bg-paper`, `text-marulho`).
+- [x] Headline stat re-typeset as editorial lead — stripped card chrome, serif sentence at 28px, key numbers in serif-bold-teal, region name underlined in teal.
+- [x] Coordinate eyebrow `41°S · MARULHO · MARINE HEATWAVE LIVE NZ` places the report at Cook Strait latitude (nautical-chart signal).
+- [x] Dashed teal section dividers (above headline stat, above methodology footer) echo the sparkline's reference lines — visual through-line between chart and chrome.
+- [x] Subtle SVG paper-grain overlay (~3% opacity, fixed position, multiply on light / screen on dark) for tactile "printed not rendered" depth.
 
 ---
 
@@ -160,3 +177,7 @@ Decisions we'd like input on, surfaced so they don't fester:
 - **2026-04-17** — v1.1 calibration pass: cross-product scalar offset (Open-Meteo − CoralTemp) computed offline per region and applied at request time, closing the v1.0 anomaly-bias caveat. Stationarity diagnostic emitted alongside; all 10 regions flagged with non-trivial seasonal residuals, so per-DOY upgrade is now an explicit v1.2 candidate. NIWA cross-check (manual) still pending.
 - **2026-04-17** — v1.1 sparklines: 60-day inline SST sparkline added to each region card. Pure server-rendered SVG (no client JS), reference lines for seas + threshold, orange fill above threshold, blue tint below baseline, accessible `<title>` summary.
 - **2026-04-17** — v1.1 accessibility + polish: `lang="en-NZ"`, dynamic OG image + meta description from live headline, sitemap + robots via app-router conventions, non-colour hazard-stripe signal on active-heatwave bars plus `sr-only` state labels. Last v1.1 blocker before the Vercel push.
+- **2026-04-19** — sparkline polish: native browser hover tooltips on each reference line via fat invisible hit-zone overlays; card footnote legend colour-matched to the dashed-line colours.
+- **2026-04-19** — marine heatwave explainer added between H1 and headline stat — gives new visitors conceptual scaffolding (definition + documented impacts + framing-discipline statement) before the live numbers hit.
+- **2026-04-19** — editorial design refresh: Fraunces serif + IBM Plex Sans/Mono typography, Marulho teal signature accent, paper-warm + ink-navy palette, coordinate eyebrow, dashed teal section dividers echoing the sparkline reference lines, subtle SVG paper-grain overlay. Repositions the page from "generic Next.js dashboard" to "published Marulho report".
+- **2026-04-19** — CLAUDE.md updated with the new design tokens, the headline single-source pointer (`src/lib/headline.ts`), and five gotchas surfaced this session (Tailwind v4 dark-mode media-query behaviour, Next.js metadata replace-not-merge, Open-Meteo `past_days=92` actually returns 93 days, SVG hover hit-zone pattern, day-by-day chart references for >30-day windows).

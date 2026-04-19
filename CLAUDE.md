@@ -90,6 +90,10 @@ Category by multiplier of the (90th percentile − climatology) anomaly:
 
 **TypeScript:** no `esModuleInterop` — use `import * as fs from "node:fs/promises"`, never `import fs from ...`.
 
+**Design tokens:** `text-ink` / `bg-paper` / `text-marulho` / `text-marulho-soft` (NOT `text-slate-*`). Fonts: `font-serif` (Fraunces, display) · `font-sans` (IBM Plex Sans, default body) · `font-mono` (IBM Plex Mono, labels + tabular numbers). Visual register matches editorial framing: restrained, no playful chrome, no gradients, no animations.
+
+**Headline sentence:** [`src/lib/headline.ts`](src/lib/headline.ts) `buildHeadline()` is the single source — consumed by `src/app/page.tsx`, its `generateMetadata`, and `src/app/opengraph-image.tsx`. Edit there, not inline.
+
 ## Data sources — what works
 
 - **Live SST → Open-Meteo Marine API.** Free, CC-BY, no key, parallel-friendly.
@@ -102,3 +106,8 @@ Category by multiplier of the (90th percentile − climatology) anomaly:
 - Live SST and climatology come from different products → ~0–0.3 °C systematic offset. Corrected at request time via the per-region scalar in `data/calibration/<region-id>.json`, applied in `src/lib/hobday.ts:buildSeries`.
 - `AbortSignal.timeout(N)` covers response time only — Undici's default **connect timeout is 10s** and is separate. ERDDAP connects can exceed that under load.
 - Scaffolding Next.js into the repo root required moving `CLAUDE.md` aside temporarily (`create-next-app` refuses to scaffold into a non-empty dir).
+- **Tailwind v4 dark mode is media-query driven** — `documentElement.classList.add('dark')` does nothing. Test dark mode via OS preference or `preview_resize colorScheme: "dark"`.
+- **Next.js page-level `openGraph` / `twitter` metadata REPLACE the layout's**, they don't deep-merge. `generateMetadata` must return the full structure (siteName, locale, type, etc.) or those fields drop.
+- **Open-Meteo `past_days=92` returns 93 daily entries** — the last is today/forecast, not strictly past. CoralTemp via PIFSC ERDDAP lags real-time ~1–2 days, so for overlap windows use `endDate = today − 2`.
+- **SVG hover tooltips on chart strokes need fat invisible hit-zone overlays** — `<title>` only fires on painted pixels, and 1px strokes under `preserveAspectRatio="none"` are nearly impossible to land. Pattern: duplicate path with `stroke="transparent" strokeWidth={8} style={{ pointerEvents: "stroke" }}` carrying the title.
+- **For SST visualisations spanning >30 days, draw seas/thresh references day-by-day, not as flat medians.** NZ coastal climatology drifts 1–2°C in shoulder seasons; a flat median line misplaces today's actual baseline by ~1°C in autumn — see [`src/components/Sparkline.tsx`](src/components/Sparkline.tsx) for the day-by-day pattern.
