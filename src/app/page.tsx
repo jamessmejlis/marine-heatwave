@@ -78,7 +78,7 @@ export default async function Home() {
             Sea temperature, honestly reported.
           </h1>
           <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
-            Current sea temperature for 10 NZ coastal regions, compared to the
+            Current sea temperature for {regions.length} NZ coastal regions, compared to the
             30-year average for the same time of year and classified using the
             standard marine-heatwave definition.
           </p>
@@ -344,6 +344,25 @@ export default async function Home() {
                 .
               </p>
               <p className="mt-2 text-sm leading-relaxed">
+                <strong>Region selection —</strong> the five aquaculture-region
+                pixels (Coromandel, Bay of Plenty / Ōpōtiki, Marlborough Sounds /
+                Pelorus, Golden Bay, Foveaux Strait) use the lat/lon points
+                published in{" "}
+                <a
+                  href="https://doi.org/10.3389/fmars.2025.1607806"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  Fauchereau et al. (2025)
+                </a>
+                , the multi-model SST forecast paper that underpins NIWA's
+                monthly outlook — snapped to the nearest CoralTemp 5 km sea
+                pixel where Fauchereau's exact point sits on land (Fauchereau
+                used OISST at 25 km, where coastal points fall inside larger
+                sea pixels). The remaining seven regions are picked for
+                plausible offshore pixels representative of broad public place
+                names.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
                 <strong>Cross-product calibration —</strong> live SST
                 (Open-Meteo) and the climatology (CoralTemp) come from different
                 products that can disagree by ~0.0–0.3 °C for the same pixel. A
@@ -404,11 +423,14 @@ export default async function Home() {
               </p>
               <p className="mt-2 text-sm leading-relaxed">
                 <strong>Why single grid cells, not regional averages?</strong>{" "}
-                Each region is one 5-km pixel picked for a plausible offshore
-                location. Simple, reproducible, and easy to audit. For
-                oceanographically mixed regions (Cook Strait, Foveaux) a single
-                pixel can be non-representative; a 3×3 sea-weighted average is a
-                candidate refinement.
+                Each region is one 5-km pixel — simple, reproducible, easy to
+                audit. The five aquaculture pixels follow Fauchereau et al.
+                (2025) so anomalies are directly comparable to the published
+                NIWA-aligned forecast paper; the remaining seven are picked for
+                plausible offshore locations representative of the public place
+                name. For oceanographically mixed regions (Foveaux Strait) a
+                single pixel can be non-representative; a 3×3 sea-weighted
+                average is a candidate refinement.
               </p>
             </section>
 
@@ -454,7 +476,7 @@ export default async function Home() {
                 CoralTemp offset is applied as a single scalar per region,
                 assuming the two products drift in parallel across the year.
                 Diagnostics show non-trivial seasonal residuals (&gt;0.4 °C range
-                for all 10 regions), so a per-day-of-year calibration is queued
+                for all 12 regions), so a per-day-of-year calibration is queued
                 for v1.2. Today's classification is robust to this; borderline
                 events in shoulder seasons may flip category as the refinement
                 lands.
@@ -513,6 +535,17 @@ export default async function Home() {
                   Robert Schlegel
                 </a>{" "}
                 — our defaults follow theirs.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed">
+                Region pixels for the five aquaculture areas (Coromandel, Bay of
+                Plenty, Marlborough Sounds, Golden Bay, Foveaux Strait) follow{" "}
+                <a
+                  href="https://doi.org/10.3389/fmars.2025.1607806"
+                  className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+                >
+                  Fauchereau et al. (2025)
+                </a>
+                , whose multi-model SST forecast underpins NIWA's monthly outlook.
               </p>
               <p className="mt-2 text-sm leading-relaxed">
                 Data comes from{" "}

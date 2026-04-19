@@ -1,12 +1,12 @@
 {
   "regionId": "fiordland",
-  "offset": -0.3879787234042556,
+  "offset": -0.399148936170213,
   "n": 94,
   "window": {
-    "start": "2026-01-12",
-    "end": "2026-04-15"
+    "start": "2026-01-14",
+    "end": "2026-04-17"
   },
   "ctResolvedLat": -45.625,
   "ctResolvedLon": 166.125,
-  "computedAt": "2026-04-17T01:53:13.159Z"
+  "computedAt": "2026-04-19T06:17:06.007Z"
 }

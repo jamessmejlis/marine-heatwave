@@ -1,0 +1,12 @@
+{
+  "regionId": "golden-bay",
+  "offset": 0.22702127659574414,
+  "n": 94,
+  "window": {
+    "start": "2026-01-14",
+    "end": "2026-04-17"
+  },
+  "ctResolvedLat": -40.675,
+  "ctResolvedLon": 172.825,
+  "computedAt": "2026-04-19T06:17:01.190Z"
+}

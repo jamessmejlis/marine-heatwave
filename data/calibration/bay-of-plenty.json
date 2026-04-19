@@ -1,12 +1,12 @@
 {
   "regionId": "bay-of-plenty",
-  "offset": -0.19457446808510684,
+  "offset": -0.19468085106383012,
   "n": 94,
   "window": {
-    "start": "2026-01-12",
-    "end": "2026-04-15"
+    "start": "2026-01-14",
+    "end": "2026-04-17"
   },
-  "ctResolvedLat": -37.625,
-  "ctResolvedLon": 176.375,
-  "computedAt": "2026-04-17T01:52:58.879Z"
+  "ctResolvedLat": -37.975,
+  "ctResolvedLon": 177.275,
+  "computedAt": "2026-04-19T06:16:54.948Z"
 }

@@ -1,0 +1,12 @@
+{
+  "regionId": "otago",
+  "offset": -0.2687234042553195,
+  "n": 94,
+  "window": {
+    "start": "2026-01-14",
+    "end": "2026-04-17"
+  },
+  "ctResolvedLat": -45.875,
+  "ctResolvedLon": 170.875,
+  "computedAt": "2026-04-19T06:17:04.608Z"
+}

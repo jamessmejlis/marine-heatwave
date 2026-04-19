@@ -1,0 +1,12 @@
+{
+  "regionId": "coromandel",
+  "offset": 0.8915957446808505,
+  "n": 94,
+  "window": {
+    "start": "2026-01-14",
+    "end": "2026-04-17"
+  },
+  "ctResolvedLat": -36.775,
+  "ctResolvedLon": 175.475,
+  "computedAt": "2026-04-19T06:16:53.827Z"
+}

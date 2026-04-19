@@ -1,12 +1,12 @@
 {
   "regionId": "hawkes-bay",
-  "offset": 0.04329787234042523,
+  "offset": 0.04414893617021249,
   "n": 94,
   "window": {
-    "start": "2026-01-12",
-    "end": "2026-04-15"
+    "start": "2026-01-14",
+    "end": "2026-04-17"
   },
   "ctResolvedLat": -39.625,
   "ctResolvedLon": 177.625,
-  "computedAt": "2026-04-17T01:53:02.748Z"
+  "computedAt": "2026-04-19T06:16:58.428Z"
 }

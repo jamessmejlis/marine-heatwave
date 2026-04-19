@@ -1,12 +1,12 @@
 {
   "regionId": "east-cape",
-  "offset": -0.14851063829787273,
+  "offset": -0.16712765957446843,
   "n": 94,
   "window": {
-    "start": "2026-01-12",
-    "end": "2026-04-15"
+    "start": "2026-01-14",
+    "end": "2026-04-17"
   },
   "ctResolvedLat": -37.625,
   "ctResolvedLon": 178.625,
-  "computedAt": "2026-04-17T01:53:04.564Z"
+  "computedAt": "2026-04-19T06:16:56.644Z"
 }

@@ -53,9 +53,9 @@ A one-page dashboard showing sea surface temperature vs 30-year baseline for ~10
 
 ## NZ coastal regions (current list — 12)
 
-> **Roadmap update** — build was started with an earlier region list. This is the current canonical list; update region seeds / config to match. See "Roadmap history" below for prior states.
-
 Twelve regions covering the full NZ coastline. Public-facing labels are broad, well-known place names. Where the region overlaps with one of Fauchereau et al. 2025's five aquaculture regions, the **measurement point** is the aquaculture site — scientifically meaningful, closest to where MHW impact lives — while the **public label** stays recognisable.
+
+**Coordinate provenance:** the five aquaculture pixels (Coromandel, Bay of Plenty/Ōpōtiki, Marlborough Sounds/Pelorus, Golden Bay, Foveaux Strait) use the lat/lon points published in Fauchereau et al. 2025's [`SST_obs_correlations.ipynb`](https://github.com/nicolasfauchereau/SST_forecasting/blob/main/notebooks/SST_obs_correlations.ipynb) (Foveaux not in their notebook — kept our existing pixel). Fauchereau used OISST 0.25° (~25 km), so coastal points fall inside larger sea pixels; on CoralTemp 5 km some of those exact points sit on land and need a small offshore nudge (Bay of Plenty: nudged from −38.0123, 177.2871 to −37.975, 177.275 to clear the Ōpōtiki shoreline). Other seven regions are picked offshore-pragmatic.
 
 | # | Public label | Measurement point / notes |
 |---|---|---|

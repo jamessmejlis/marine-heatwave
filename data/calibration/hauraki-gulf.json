@@ -1,12 +1,12 @@
 {
   "regionId": "hauraki-gulf",
-  "offset": 0.6385106382978716,
+  "offset": 0.5961702127659567,
   "n": 94,
   "window": {
-    "start": "2026-01-12",
-    "end": "2026-04-15"
+    "start": "2026-01-14",
+    "end": "2026-04-17"
   },
   "ctResolvedLat": -36.375,
   "ctResolvedLon": 174.875,
-  "computedAt": "2026-04-17T01:52:58.878Z"
+  "computedAt": "2026-04-19T06:16:51.161Z"
 }

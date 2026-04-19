@@ -1,0 +1,12 @@
+{
+  "regionId": "marlborough-sounds",
+  "offset": 0.6629787234042547,
+  "n": 94,
+  "window": {
+    "start": "2026-01-14",
+    "end": "2026-04-17"
+  },
+  "ctResolvedLat": -41.175,
+  "ctResolvedLon": 173.875,
+  "computedAt": "2026-04-19T06:16:59.775Z"
+}
