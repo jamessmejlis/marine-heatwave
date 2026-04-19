@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Marine Heatwave Live NZ
 
-## Getting Started
+Live sea surface temperature vs 30-year baseline for 12 NZ coastal regions, with [Hobday et al. 2016](https://doi.org/10.1016/j.pocean.2015.12.014) marine heatwave classification.
 
-First, run the development server:
+**Live:** [heatwave.marulho.co](https://heatwave.marulho.co)
+
+The gap this fills: NIWA publishes a monthly SST *forecast*. Nobody publishes a live consumer-facing view of what the NZ ocean is actually doing **right now** and over the last 30 days. This is that view.
+
+## What it shows
+
+- Current SST per region, coloured by anomaly vs 1991–2020 climatology
+- Hobday MHW category (Moderate / Strong / Severe / Extreme) when a region is in heatwave conditions
+- 60-day sparkline per region with the 90th-percentile threshold drawn day-by-day
+- One headline sentence: *"X regions currently in marine heatwave conditions. Longest active event: Y days, Z region, Strong category."*
+
+## Stack
+
+- Next.js 16 · TypeScript · Tailwind CSS v4
+- Bun runtime
+- Deployed on Vercel with 1h ISR
+
+## Data sources
+
+| Source | Purpose |
+|---|---|
+| [Open-Meteo Marine API](https://open-meteo.com/en/docs/marine-weather-api) | Live daily SST per region (CC-BY, no key) |
+| [NOAA CoralTemp v3.1](https://coralreefwatch.noaa.gov/product/5km/index_5km_sst.php) via [PIFSC ERDDAP](https://oceanwatch.pifsc.noaa.gov/erddap/griddap/CRW_sst_v3_1.html) | 30-year daily climatology baseline |
+
+Per-region calibration offsets (`data/calibration/*.json`) correct the ~0–0.3 °C systematic difference between the two products.
+
+## Local dev
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
+bun run dev       # http://localhost:3000
+bun run build     # production build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Baseline artifacts are committed, so local dev works immediately. Rebuild only when regions or the reference period change:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+bun run build-climatology   # 35–60 min, pulls 30y of CoralTemp via ERDDAP
+bun run build-calibration   # ~1–2 min, re-derives Open-Meteo↔CoralTemp offsets
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scope
 
-## Learn More
+This is an **observational** dashboard — live + recent historical, not a forecast. For NZ SST outlooks, see [NIWA's monthly SST Update](https://niwa.co.nz/climate-and-weather/sea-surface-temperature-update).
 
-To learn more about Next.js, take a look at the following resources:
+## Credits
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- MHW methodology: Hobday et al. 2016
+- NZ region selection: [Fauchereau et al. 2025](https://doi.org/10.3389/fmars.2025.1607806) (NIWA / Earth Sciences NZ)
+- Data: NOAA OISST/CoralTemp, Open-Meteo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A [Marulho](https://marulho.co) experiment in turning hidden NZ data into single useful answers.

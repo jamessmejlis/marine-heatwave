@@ -18,10 +18,10 @@ What's live on `main` as of 2026-04-17:
 - [x] Dashboard UI: headline stat, 12 region cards with colour-coded category strip, methodology footer with transparent sourcing ([`src/app/page.tsx`](src/app/page.tsx), [`src/components/RegionCard.tsx`](src/components/RegionCard.tsx))
 - [x] Production build passes, static generation with 1h ISR
 
-**Not yet shipped** (but v1-blocking-ish):
+**Shipped post-v1.0:**
 
-- [ ] Push to GitHub and deploy to Vercel
-- [ ] Marulho subdomain wired (e.g. `marine-heatwave.marulho.app`)
+- [x] Pushed to GitHub: [jamessmejlis/marine-heatwave](https://github.com/jamessmejlis/marine-heatwave) (public)
+- [x] Deployed to Vercel, live at [heatwave.marulho.co](https://heatwave.marulho.co) (Git-connected, auto-deploys on push to `main`)
 
 ---
 
@@ -168,7 +168,7 @@ Ideas we explored but decided against or deferred:
 
 Decisions we'd like input on, surfaced so they don't fester:
 
-- [ ] **Subdomain**: `marine-heatwave.marulho.app`? `heatwave.marulho.app`? `mhw.marulho.app`? Consider shareability and how it reads in a tweet.
+- [x] ~~**Subdomain**: `marine-heatwave.marulho.app`? `heatwave.marulho.app`? `mhw.marulho.app`?~~ **Resolved 2026-04-19** → `heatwave.marulho.co`. Project-named convention for the Marulho constellation; topic-prefix (`ocean.marulho.co/heatwave`) deferred until ≥3 ocean ships are live and an "ocean hub" landing page earns its keep. Migration path preserved via Vercel 301s on the subdomain if we ever regroup.
 - [ ] **v1.1 ship target**: concurrent with v1.0 launch (bundled) or a 1-week follow-up so v1.0 gets its own moment?
 - [ ] **NIWA outreach**: should we email NIWA's SST team proactively before public launch, or wait for the tool to ship and let them discover organically? (Relevant to future data partnership and commercial-tier optionality.)
 - [ ] **Iwi consultation**: for regions with rohe moana of cultural significance (notably Hauraki Gulf / Tīkapa Moana for Ngāti Whātua; Foveaux / Te Ara-a-Kiwa for Ngāi Tahu), do we proactively reach out before launch, or wait? Probably wait — v1 is observation-only, no claims made — but worth thinking about before v2 interpretation features.
@@ -190,4 +190,5 @@ Decisions we'd like input on, surfaced so they don't fester:
 - **2026-04-19** — methodology content folded into the main page footer as five anchored sub-sections (`#methodology`, `#sources`, `#choices`, `#limitations`, `#acknowledgements`) rather than a separate `/methodology` route. Keeps the FuelClock one-page discipline while making the reference material deep-linkable. Cross-check table embed remains pending on the v1.1 `scripts/cross-check-niwa.ts` script.
 - **2026-04-19** — plain-language sweep across user-facing chrome (page header, explainer, headline stat, sparkline accessibility titles, card screen-reader labels): `SST` → `sea temperature`, `30-year climatological baseline` → `30-year average for the same time of year`, `≥5 consecutive days` → `at least 5 days in a row`, `90th percentile` → `warmest 10%`, `climatology` → `30-year average`. Methodology footer kept technical (right register for opt-in technical readers). Newcomers can now read above-the-fold without hitting an unexplained acronym or statistical term.
 - **2026-04-19** — v2 backlog: **baseline-period toggle** added — pre-build climatologies at multiple WMO standard normals (1961–1990, 1971–2000, 1981–2010, 1991–2020), expose UI toggle on dashboard + permalinks. The 30-year baseline itself drifts as the climate warms, so today's "moderate" against 1991–2020 might read as "severe" against an earlier window. Pairs with the historical time slider; published Hobday-vs-Oliver methodological debate (fixed vs detrended baselines) gives the framing.
+- **2026-04-19** — **v1.0 shipped publicly** at [heatwave.marulho.co](https://heatwave.marulho.co). Repo pushed to GitHub ([jamessmejlis/marine-heatwave](https://github.com/jamessmejlis/marine-heatwave), public), imported to Vercel, custom domain attached (DNS auto-handled since `marulho.co` nameservers are already at Vercel). Subdomain open-question resolved: project-named convention (`heatwave.marulho.co`) for the Marulho constellation. First ship of the Marulho marine track — smallest technical surface, strongest virality cadence, pipeline ready to feed Kelp Watch + Underwater Visibility.
 - **2026-04-19** — region migration: 10 → 12 regions per the canonical CLAUDE.md spec. Added Coromandel, Marlborough Sounds (Pelorus), Otago; dropped Cook Strait; renamed/relabeled Tasman→Golden Bay, Hawke's Bay→Hawke's Bay/Wairarapa, Kaikōura→Kaikōura/East Coast South. Aquaculture-region pixels (Coromandel, Bay of Plenty, Marlborough Sounds, Golden Bay) sourced from [Fauchereau et al. 2025's open notebook](https://github.com/nicolasfauchereau/SST_forecasting/blob/main/notebooks/SST_obs_correlations.ipynb) — Foveaux Strait absent from their notebook, kept our existing pixel. Discovered a sharp resolution constraint: Fauchereau's lat/lons were chosen for OISST 25 km where coastal points still fall inside large sea pixels, but on CoralTemp 5 km some sit on land. Bay of Plenty needed a small offshore nudge (−38.0123, 177.2871 → −37.975, 177.275) to clear the Ōpōtiki shoreline. Climatology + calibration rebuilt for the 5 affected regions; all 12 cards now render with full data. Methodology footer (`#sources`, `#choices`, `#acknowledgements`) updated to credit Fauchereau and document the offshore-snap caveat. Final pre-deploy state.
