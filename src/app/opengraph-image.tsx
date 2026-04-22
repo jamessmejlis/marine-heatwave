@@ -39,9 +39,8 @@ export default async function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "64px 72px",
-          backgroundImage:
-            "linear-gradient(180deg, #0f172a 0%, #164e63 60%, #0369a1 100%)",
-          color: "#f1f5f9",
+          backgroundColor: "#04101c",
+          color: "#f5efe4",
           fontFamily:
             "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
         }}
@@ -49,25 +48,27 @@ export default async function OpenGraphImage() {
         <div
           style={{
             display: "flex",
+            justifyContent: "space-between",
             fontSize: 22,
             letterSpacing: 4,
             textTransform: "uppercase",
-            color: "#cbd5e1",
             fontFamily: "ui-monospace, SFMono-Regular, monospace",
             fontWeight: 600,
           }}
         >
-          Marulho · Marine Heatwave Live NZ
+          <span style={{ color: "#4eb5af" }}>Marine Heatwave Live NZ</span>
+          <span style={{ color: "#94a3b8" }}>Built by Marulho</span>
         </div>
 
         <div
           style={{
             display: "flex",
-            fontSize: 58,
-            lineHeight: 1.15,
-            fontWeight: 600,
-            color: "#ffffff",
+            fontSize: 64,
+            lineHeight: 1.05,
+            fontWeight: 500,
+            color: "#f5efe4",
             letterSpacing: -0.5,
+            fontFamily: "ui-serif, Georgia, 'Times New Roman', serif",
           }}
         >
           {headline}
@@ -83,7 +84,7 @@ export default async function OpenGraphImage() {
             fontFamily: "ui-monospace, SFMono-Regular, monospace",
           }}
         >
-          <span>Sea temperature, honestly reported.</span>
+          <span style={{ color: "#4eb5af" }}>How warm is the sea today?</span>
           <span>{host}</span>
         </div>
       </div>

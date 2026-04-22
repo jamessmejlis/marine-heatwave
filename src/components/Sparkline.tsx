@@ -30,9 +30,9 @@ type Props = {
 };
 
 const W = 240;
-const H = 44;
-const PAD_TOP = 2;
-const PAD_BOTTOM = 4;
+const H = 80;
+const PAD_TOP = 4;
+const PAD_BOTTOM = 8;
 
 export function Sparkline({ series, regionName, regionId }: Props) {
   const allVals: number[] = [];

@@ -71,16 +71,24 @@ export default async function Home() {
     <div className="flex flex-col flex-1">
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10 sm:px-8 sm:py-14">
         <header className="mb-10">
-          <div className="flex items-center gap-2 font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase">
-            <span>41°S · Marulho · Marine Heatwave Live NZ</span>
+          <div className="flex items-center justify-between gap-4 font-mono text-[10px] font-medium tracking-[0.14em] text-marulho uppercase sm:text-xs sm:tracking-[0.2em]">
+            <span>Marine Heatwave Live NZ</span>
+            <a
+              href="https://marulho.co"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-ink/60 transition-colors hover:text-marulho dark:text-slate-400"
+            >
+              Built by Marulho
+            </a>
           </div>
           <h1 className="font-serif mt-4 text-4xl leading-[1.02] tracking-tight text-ink sm:text-[56px]">
-            Sea temperature, honestly reported.
+            How warm is the sea today?
           </h1>
           <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
-            Current sea temperature for {regions.length} NZ coastal regions, compared to the
-            30-year average for the same time of year and classified using the
-            standard marine-heatwave definition.
+            A live dashboard tracking sea surface temperature (SST), 30-year
+            anomaly, and marine-heatwave status across {regions.length} NZ
+            coastal regions — updated daily.
           </p>
 
           <section
@@ -94,35 +102,10 @@ export default async function Home() {
               What's a marine heatwave?
             </h2>
             <p className="mt-2 text-base leading-relaxed text-slate-600 dark:text-slate-300">
-              At least 5 days in a row when the sea is unusually warm for the
-              time of year — specifically, in the warmest 10% of the past
-              30 years' readings for the same calendar date. The standard{" "}
-              <a
-                href="https://www.marineheatwaves.org/mhw-overview.html"
-                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
-              >
-                Hobday et al. (2016)
-              </a>{" "}
-              definition. A different kind of extreme weather: slower, larger,
-              often invisible from shore — past NZ events have spread thousands
-              of kilometres across the Tasman Sea.
-            </p>
-            <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
-              Documented impacts{" "}
-              <a
-                href="https://rsnz.onlinelibrary.wiley.com/doi/10.1080/00288330.2024.2436661"
-                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
-              >
-                around Aotearoa
-              </a>{" "}
-              and elsewhere include kelp forest die-off, mass mortality in
-              marine life, lower dissolved oxygen, ocean acidification,
-              disrupted fisheries and aquaculture, and shifts in where species
-              can survive — sometimes compounding with land heatwaves and
-              other climate extremes. This page reports the data so anyone can
-              see when local conditions cross into heatwave territory;
-              interpretation of what it means for any specific ecosystem
-              belongs with marine biologists, not us.
+              Sea temperature in the warmest 10% of the 30-year record for at
+              least 5 consecutive days. Slower and larger than a land heatwave,
+              often invisible from shore — but linked to kelp forest die-off,
+              mass marine mortality, and disrupted fisheries.
             </p>
           </section>
 
@@ -178,7 +161,7 @@ export default async function Home() {
 
         <section
           aria-label="Regions"
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
           {states.map((s) => (
             <RegionCard key={s.region.id} state={s} />
@@ -202,55 +185,44 @@ export default async function Home() {
           </section>
         )}
 
+        <section
+          aria-labelledby="about-mhw-heading"
+          className="mt-16 max-w-2xl"
+        >
+          <h2
+            id="about-mhw-heading"
+            className="font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase"
+          >
+            About marine heatwaves
+          </h2>
+          <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+            Past NZ events have stretched thousands of kilometres across the
+            Tasman Sea. Documented impacts{" "}
+            <a
+              href="https://rsnz.onlinelibrary.wiley.com/doi/10.1080/00288330.2024.2436661"
+              className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+            >
+              around Aotearoa
+            </a>{" "}
+            and elsewhere include kelp forest die-off, mass mortality in
+            marine life, lower dissolved oxygen, ocean acidification, disrupted
+            fisheries and aquaculture, and shifts in where species can
+            survive — sometimes compounding with land heatwaves and other
+            climate extremes.
+          </p>
+          <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+            This page reports the data so anyone can see when local conditions
+            cross into heatwave territory. Interpretation of what it means for
+            any specific ecosystem belongs with marine biologists, not us.
+          </p>
+        </section>
+
         <footer className="mt-16 border-t border-dashed border-marulho/30 pt-10 text-ink/70">
           <div className="max-w-2xl">
-            <p className="font-mono text-xs font-medium tracking-[0.2em] text-marulho uppercase">
-              Reference
-            </p>
-            <p className="mt-3 text-sm leading-relaxed">
-              How this page is built, what it can and can't tell you, and who
-              to thank. Deep-linkable at{" "}
-              <a
-                href="#methodology"
-                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
-              >
-                #methodology
-              </a>
-              ,{" "}
-              <a
-                href="#sources"
-                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
-              >
-                #sources
-              </a>
-              ,{" "}
-              <a
-                href="#choices"
-                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
-              >
-                #choices
-              </a>
-              ,{" "}
-              <a
-                href="#limitations"
-                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
-              >
-                #limitations
-              </a>
-              ,{" "}
-              <a
-                href="#acknowledgements"
-                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
-              >
-                #acknowledgements
-              </a>
-              .
-            </p>
-
             <section
               id="methodology"
               aria-labelledby="methodology-heading"
-              className="mt-10 scroll-mt-8"
+              className="scroll-mt-8"
             >
               <h2
                 id="methodology-heading"
@@ -582,8 +554,16 @@ export default async function Home() {
             </section>
 
             <p className="mt-12 font-mono text-xs tracking-wide text-ink/50">
-              A Marulho experiment in turning hidden NZ data into single useful
-              answers.
+              A{" "}
+              <a
+                href="https://marulho.co"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
+              >
+                Marulho
+              </a>{" "}
+              experiment in turning hidden data into useful insights.
             </p>
           </div>
         </footer>
