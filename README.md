@@ -50,7 +50,7 @@ This is an **observational** dashboard — live + recent historical, not a forec
 ## Credits
 
 - MHW methodology: Hobday et al. 2016
-- NZ region selection: [Fauchereau et al. 2025](https://doi.org/10.3389/fmars.2025.1607806) (NIWA / Earth Sciences NZ)
+- NZ region selection: [Santana et al. 2025](https://doi.org/10.3389/fmars.2025.1607806) (NIWA / Earth Sciences NZ)
 - Data: NOAA OISST/CoralTemp, Open-Meteo
 
 A [Marulho](https://marulho.co) experiment in turning hidden NZ data into single useful answers.

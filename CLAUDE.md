@@ -15,7 +15,34 @@ A one-page dashboard showing sea surface temperature vs 30-year baseline for ~10
 - Part of the Marulho marine constellation (see `~/Developer/open-data/nz-marine-project-ideas.md` for full context)
 - First ship of the marine track — smallest technical surface, strongest virality cadence
 - Pipeline feeds downstream projects (Kelp Watch thermal overlay, Underwater Visibility SST input) — "build once, use thrice"
-- 1-day prototype target
+- 1-day prototype target (shipped 2026-04-19; now in correctness + polish mode)
+
+## Task Workflow
+
+Follow this sequence for every task. Do NOT skip steps or mark a task done early. This was retrofitted post-ship — v1 was built fast without it, and the difference now is noticeable.
+
+### 1. Pick the task
+Read [`ROADMAP.md`](ROADMAP.md) — find the **Current task** block at the top, or the next unchecked item in the active milestone (v1.1 Cross-check lab, then v1.2). Each task description should carry enough context to work independently. If not, read the surrounding milestone intro.
+
+### 2. Plan
+Use plan mode. Explore the relevant files (`src/lib/*`, `scripts/*`, `data/*`), identify what to create/modify, note any gotchas from the "Gotchas" section below that apply. Get user approval before writing code.
+
+### 3. Implement
+Write the code. Verify it compiles and type-checks: `bun run build`. Run the dev server and manually check the change at `http://localhost:3000` before handing off.
+
+### 4. Hand off for testing
+Tell the user what to test and how (URL to open, specific region or card to inspect, what "working" looks like). **Stop here and wait.** Do not update ROADMAP.md or CLAUDE.md yet, do not commit, do not mark the task done.
+
+### 5. Fix issues
+If the user reports bugs or requests changes, fix them. Repeat steps 4–5 until the user confirms it works.
+
+### 6. Wrap up (only after user confirms working)
+- Check off the task in `ROADMAP.md` (`- [ ]` → `- [x]`)
+- Update the Scorecard in `ROADMAP.md` (increment completed, decrement remaining)
+- If the task revealed a non-obvious decision or tradeoff, add it to the Changelog at the bottom of `ROADMAP.md` with a one-line rationale
+- If the task surfaced a new gotcha, add it to the "Gotchas" section of this file — that's how this project gets smarter between sessions
+- Update the "Current task" block in `ROADMAP.md` to point at the next item
+- Commit everything together (code + doc updates) with a message that references the milestone (e.g., `v1.1: NOAA CRW sanity-check script`)
 
 ## Data sources
 
@@ -53,9 +80,9 @@ A one-page dashboard showing sea surface temperature vs 30-year baseline for ~10
 
 ## NZ coastal regions (current list — 12)
 
-Twelve regions covering the full NZ coastline. Public-facing labels are broad, well-known place names. Where the region overlaps with one of Fauchereau et al. 2025's five aquaculture regions, the **measurement point** is the aquaculture site — scientifically meaningful, closest to where MHW impact lives — while the **public label** stays recognisable.
+Twelve regions covering the full NZ coastline. Public-facing labels are broad, well-known place names. Where the region overlaps with one of Santana et al. 2025's five aquaculture regions, the **measurement point** is the aquaculture site — scientifically meaningful, closest to where MHW impact lives — while the **public label** stays recognisable.
 
-**Coordinate provenance:** the five aquaculture pixels (Coromandel, Bay of Plenty/Ōpōtiki, Marlborough Sounds/Pelorus, Golden Bay, Foveaux Strait) use the lat/lon points published in Fauchereau et al. 2025's [`SST_obs_correlations.ipynb`](https://github.com/nicolasfauchereau/SST_forecasting/blob/main/notebooks/SST_obs_correlations.ipynb) (Foveaux not in their notebook — kept our existing pixel). Fauchereau used OISST 0.25° (~25 km), so coastal points fall inside larger sea pixels; on CoralTemp 5 km some of those exact points sit on land and need a small offshore nudge (Bay of Plenty: nudged from −38.0123, 177.2871 to −37.975, 177.275 to clear the Ōpōtiki shoreline). Other seven regions are picked offshore-pragmatic.
+**Coordinate provenance:** the five aquaculture pixels (Coromandel, Bay of Plenty/Ōpōtiki, Marlborough Sounds/Pelorus, Golden Bay, Foveaux Strait) use the lat/lon points published in Santana et al. 2025's [`SST_obs_correlations.ipynb`](https://github.com/nicolasfauchereau/SST_forecasting/blob/main/notebooks/SST_obs_correlations.ipynb) (Foveaux not in their notebook — kept our existing pixel). Santana et al. used OISST 0.25° (~25 km), so coastal points fall inside larger sea pixels; on CoralTemp 5 km some of those exact points sit on land and need a small offshore nudge (Bay of Plenty: nudged from −38.0123, 177.2871 to −37.975, 177.275 to clear the Ōpōtiki shoreline). Other seven regions are picked offshore-pragmatic.
 
 | # | Public label | Measurement point / notes |
 |---|---|---|
@@ -80,8 +107,8 @@ Twelve regions covering the full NZ coastline. Public-facing labels are broad, w
 
 ### Roadmap history
 
-- **v0 (initial spec)** — 10 arbitrary coastline regions. Pre-research, before Fauchereau et al. 2025 was surfaced.
-- **v0.5** — expanded to 15 after merging Fauchereau's 5 aquaculture regions + Leigh/Portobello as separate entries. Too many overlaps.
+- **v0 (initial spec)** — 10 arbitrary coastline regions. Pre-research, before Santana et al. 2025 was surfaced.
+- **v0.5** — expanded to 15 after merging Santana et al.'s 5 aquaculture regions + Leigh/Portobello as separate entries. Too many overlaps.
 - **v1 (current, 12 regions)** — overlaps resolved by using broader public labels with aquaculture sites as measurement points. Leigh/Portobello demoted to reference-station annotations on their parent regions. Tasman dropped as redundant with Golden Bay and Marlborough Sounds neighbours. Cook Strait replaced by Marlborough Sounds (more meaningful coastal label for consumer dashboard).
 
 ## Marine heatwave classification
@@ -94,9 +121,9 @@ Twelve regions covering the full NZ coastline. Public-facing labels are broad, w
   - **Severe** — 3–4×
   - **Extreme** — 4×+
 
-**Baseline:** NOAA OISST v2.1 at 0.25°, 30-year climatology window — likely 1991–2020 (align with NIWA/Fauchereau convention where reasonable). Document the exact window visibly on the methodology page.
+**Baseline:** NOAA OISST v2.1 at 0.25°, 30-year climatology window — likely 1991–2020 (align with NIWA/Santana et al. convention where reasonable). Document the exact window visibly on the methodology page.
 
-**Note on monthly definition:** Fauchereau et al. 2025 uses a monthly-averaged variant because their forecast models output monthly data. For observational daily data, we use the standard daily Hobday definition.
+**Note on monthly definition:** Santana et al. 2025 uses a monthly-averaged variant because their forecast models output monthly data. For observational daily data, we use the standard daily Hobday definition.
 
 ## Scope discipline: we show actuals, not forecasts
 
@@ -111,16 +138,16 @@ Forecasts are a v2+ consideration. If we ever add them, we'd use NIWA's publishe
 
 ## Framing discipline
 
-- **Defer to the science, don't invent it.** MHW classification follows Hobday et al. 2016 (daily threshold, 5-day persistence) applied to observations. Cite Fauchereau et al. 2025 for the NZ-specific monthly definition variant and for the aquaculture-region selection rationale.
+- **Defer to the science, don't invent it.** MHW classification follows Hobday et al. 2016 (daily threshold, 5-day persistence) applied to observations. Cite Santana et al. 2025 for the NZ-specific monthly definition variant and for the aquaculture-region selection rationale.
 - Report data; don't editorialise. "SST 2.8°C above average" is a fact. "Disaster unfolding" is a claim.
 - Ecological interpretation needs context — partner with a marine biologist before stating what a heatwave "means" for species. V1 stays in the observation lane.
 - Be transparent about SST source, resolution, and climatology window per region. Confidence intervals on baselines.
-- Credit prominently: *"Data: NOAA OISST v2.1, Open-Meteo Marine. MHW methodology: Hobday et al. 2016. NZ region selection: Fauchereau et al. 2025 (NIWA / Earth Sciences NZ). For forecast outlook, see NIWA's SST Update →"*
+- Credit prominently: *"Data: NOAA OISST v2.1, Open-Meteo Marine. MHW methodology: Hobday et al. 2016. NZ region selection: Santana et al. 2025 (NIWA / Earth Sciences NZ). For forecast outlook, see NIWA's SST Update →"*
 - Footer: *"A Marulho experiment in turning hidden NZ data into single useful answers."* Constellation link to sibling projects as they ship.
 
 ## Key references
 
-- **Fauchereau et al. 2025** — *Multi-model ensemble forecasts of sea surface temperatures and marine heatwaves for Aotearoa New Zealand*, Frontiers in Marine Science. [DOI](https://doi.org/10.3389/fmars.2025.1607806). Peer-reviewed NZ MHW methodology. Open code: [github.com/nicolasfauchereau/SST_forecasting](https://github.com/nicolasfauchereau/SST_forecasting) (check licence before reuse).
+- **Santana et al. 2025** — Santana R, Rampal N, Fauchereau N, Lewis H, Thoral F, Gibson PB, Broekhuizen N. *Multi-model ensemble forecasts of sea surface temperatures and marine heatwaves for Aotearoa New Zealand*, Frontiers in Marine Science 12:1607806. [DOI](https://doi.org/10.3389/fmars.2025.1607806). Peer-reviewed NZ MHW methodology. Open code: [github.com/nicolasfauchereau/SST_forecasting](https://github.com/nicolasfauchereau/SST_forecasting) (check licence before reuse).
 - **NIWA SST Update (Earth Sciences NZ)** — [monthly forecast service](https://niwa.co.nz/climate-and-weather/sea-surface-temperature-update). 10-model ensemble, rolling 6-month horizon, static web reports. **The UX gap this project fills.**
 - **Hobday et al. 2016** — foundational paper defining the daily MHW categorisation (Moderate/Strong/Severe/Extreme).
 

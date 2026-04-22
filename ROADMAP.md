@@ -2,7 +2,46 @@
 
 Living planning doc. Tick items as they ship. Keep scope-honest: the app is a FuelClock for the ocean — one page, one answer per region. Resist feature creep that doesn't serve that shape.
 
-See [`CLAUDE.md`](CLAUDE.md) for the strategic brief. See [`~/Developer/open-data/nz-marine-project-ideas.md`](~/Developer/open-data/nz-marine-project-ideas.md) § Marine Heatwave Live NZ for the full constellation context.
+See [`CLAUDE.md`](CLAUDE.md) for the strategic brief and the **Task Workflow** (pick → plan → implement → hand off → fix → wrap up). See [`~/Developer/open-data/nz-marine-project-ideas.md`](~/Developer/open-data/nz-marine-project-ideas.md) § Marine Heatwave Live NZ for the full constellation context.
+
+---
+
+## Scorecard
+
+| Milestone | Done / Total | Remaining |
+|---|---|---|
+| v1.0 (ship) | 9 / 9 | 0 |
+| v1.1 (correctness & polish) | 22 / 24 | 2 |
+| v1.2 (share & explain) | 2 / 12 | 10 |
+| v2.0 (from the brief) | 0 / 5 | 5 |
+| Post-launch integration | 0 / 3 | 3 |
+| Research / commercial tail | 0 / 3 | 3 |
+| **Total tracked** | **33 / 56** | **23** |
+
+Update this table as part of step 6 of the Task Workflow. Excludes "On the bench" (parked) and "Open questions" (decisions, not tasks).
+
+---
+
+## Current task
+
+> The one thing to work on now. Replace this block when the task is done and confirmed by the user.
+
+**v1.1 — Pipeline sanity-check against NOAA CRW** (Cross-check lab, below)
+
+Why this one: v1.1 has two blockers left, and this is the upstream of the pair (the GitHub Action consumes the script's output). It's also the item most likely to expose a bug in the calibration or Hobday pipeline before we invest in v1.2 permalinks.
+
+**Step-by-step**
+
+1. Read [`src/lib/hobday.ts`](src/lib/hobday.ts) `buildSeries` and [`src/lib/calibration.ts`](src/lib/calibration.ts) so the script can call the same comparison logic — don't duplicate it.
+2. Find the authoritative NOAA Coral Reef Watch daily heatwave classification endpoint for a single point (likely a separate ERDDAP dataset from CoralTemp v3.1 — the "daily BAA" or "SST anomaly" product). Document the URL and which variable carries the category in a comment at the top of the script.
+3. Scaffold `scripts/sanity-check-noaa-crw.ts` — for each region in `src/lib/regions.ts`, fetch the CRW-published classification + anomaly for the last ~60 days at the region's lat/lon, fetch our own classification for the same window via existing `buildSeries`, diff the two.
+4. Emit `data/sanity-check/<YYYY-MM-DD>.json` with per-region `{ crw: {category, anomaly}, ours: {category, anomaly}, delta: {category, anomaly} }`, plus a summary `{ regionsWithCategoryDrift, regionsWithAnomalyDriftOver: 0.2 }`.
+5. Run it locally. If any region drifts more than one category, stop and investigate before shipping the GitHub Action — that's the signal we've mis-implemented Hobday or mis-applied the calibration scalar.
+6. Add a `bun run sanity-check` script to `package.json`.
+7. Hand off for testing: user runs `bun run sanity-check`, reviews the emitted JSON, confirms the summary looks right. **Stop here and wait.**
+8. On confirmation, move to the GitHub Action item (schedule: weekly, post summary to a gist or issue comment).
+
+Tasks 9–17 remain queued below; this block only owns the current one.
 
 ---
 
@@ -11,7 +50,7 @@ See [`CLAUDE.md`](CLAUDE.md) for the strategic brief. See [`~/Developer/open-dat
 What's live on `main` as of 2026-04-17:
 
 - [x] Next.js 16 + TypeScript + Tailwind v4 scaffold, Bun-native
-- [x] 12 NZ coastal regions defined with Fauchereau et al. (2025) lat/lons for the five aquaculture pixels (snapped offshore where the 5 km CoralTemp grid hits land), pragmatic offshore picks for the rest, Māori/English display metadata ([`src/lib/regions.ts`](src/lib/regions.ts))
+- [x] 12 NZ coastal regions defined with Santana et al. (2025) lat/lons for the five aquaculture pixels (snapped offshore where the 5 km CoralTemp grid hits land), pragmatic offshore picks for the rest, Māori/English display metadata ([`src/lib/regions.ts`](src/lib/regions.ts))
 - [x] Live SST from [Open-Meteo Marine API](https://open-meteo.com/en/docs/marine-weather-api) — free, CC-BY, no key, `past_days=92` so the Hobday detector sees the full plausible event window ([`src/lib/sst.ts`](src/lib/sst.ts))
 - [x] 30-year Hobday climatology + 90th-percentile threshold per region, computed locally from NOAA Coral Reef Watch CoralTemp v3.1 over 1991–2020 (WMO standard normal) via [`scripts/build-climatology.ts`](scripts/build-climatology.ts). Pre-built CSVs committed in [`data/climatology/`](data/climatology/).
 - [x] Hobday (2016) detection + Hobday (2018) categorisation matching the [`ecjoliver/marineHeatWaves`](https://github.com/ecjoliver/marineHeatWaves) reference defaults (±5-day pool, 31-day smoothing, ≥5-day minimum, ≤2-day gap merge, category = `floor(1 + (SST−seas)/(thresh−seas))` capped at 4) ([`src/lib/hobday.ts`](src/lib/hobday.ts))
@@ -191,4 +230,4 @@ Decisions we'd like input on, surfaced so they don't fester:
 - **2026-04-19** — plain-language sweep across user-facing chrome (page header, explainer, headline stat, sparkline accessibility titles, card screen-reader labels): `SST` → `sea temperature`, `30-year climatological baseline` → `30-year average for the same time of year`, `≥5 consecutive days` → `at least 5 days in a row`, `90th percentile` → `warmest 10%`, `climatology` → `30-year average`. Methodology footer kept technical (right register for opt-in technical readers). Newcomers can now read above-the-fold without hitting an unexplained acronym or statistical term.
 - **2026-04-19** — v2 backlog: **baseline-period toggle** added — pre-build climatologies at multiple WMO standard normals (1961–1990, 1971–2000, 1981–2010, 1991–2020), expose UI toggle on dashboard + permalinks. The 30-year baseline itself drifts as the climate warms, so today's "moderate" against 1991–2020 might read as "severe" against an earlier window. Pairs with the historical time slider; published Hobday-vs-Oliver methodological debate (fixed vs detrended baselines) gives the framing.
 - **2026-04-19** — **v1.0 shipped publicly** at [heatwave.marulho.co](https://heatwave.marulho.co). Repo pushed to GitHub ([jamessmejlis/marine-heatwave](https://github.com/jamessmejlis/marine-heatwave), public), imported to Vercel, custom domain attached (DNS auto-handled since `marulho.co` nameservers are already at Vercel). Subdomain open-question resolved: project-named convention (`heatwave.marulho.co`) for the Marulho constellation. First ship of the Marulho marine track — smallest technical surface, strongest virality cadence, pipeline ready to feed Kelp Watch + Underwater Visibility.
-- **2026-04-19** — region migration: 10 → 12 regions per the canonical CLAUDE.md spec. Added Coromandel, Marlborough Sounds (Pelorus), Otago; dropped Cook Strait; renamed/relabeled Tasman→Golden Bay, Hawke's Bay→Hawke's Bay/Wairarapa, Kaikōura→Kaikōura/East Coast South. Aquaculture-region pixels (Coromandel, Bay of Plenty, Marlborough Sounds, Golden Bay) sourced from [Fauchereau et al. 2025's open notebook](https://github.com/nicolasfauchereau/SST_forecasting/blob/main/notebooks/SST_obs_correlations.ipynb) — Foveaux Strait absent from their notebook, kept our existing pixel. Discovered a sharp resolution constraint: Fauchereau's lat/lons were chosen for OISST 25 km where coastal points still fall inside large sea pixels, but on CoralTemp 5 km some sit on land. Bay of Plenty needed a small offshore nudge (−38.0123, 177.2871 → −37.975, 177.275) to clear the Ōpōtiki shoreline. Climatology + calibration rebuilt for the 5 affected regions; all 12 cards now render with full data. Methodology footer (`#sources`, `#choices`, `#acknowledgements`) updated to credit Fauchereau and document the offshore-snap caveat. Final pre-deploy state.
+- **2026-04-19** — region migration: 10 → 12 regions per the canonical CLAUDE.md spec. Added Coromandel, Marlborough Sounds (Pelorus), Otago; dropped Cook Strait; renamed/relabeled Tasman→Golden Bay, Hawke's Bay→Hawke's Bay/Wairarapa, Kaikōura→Kaikōura/East Coast South. Aquaculture-region pixels (Coromandel, Bay of Plenty, Marlborough Sounds, Golden Bay) sourced from [Santana et al. 2025's open notebook](https://github.com/nicolasfauchereau/SST_forecasting/blob/main/notebooks/SST_obs_correlations.ipynb) — Foveaux Strait absent from their notebook, kept our existing pixel. Discovered a sharp resolution constraint: their lat/lons were chosen for OISST 25 km where coastal points still fall inside large sea pixels, but on CoralTemp 5 km some sit on land. Bay of Plenty needed a small offshore nudge (−38.0123, 177.2871 → −37.975, 177.275) to clear the Ōpōtiki shoreline. Climatology + calibration rebuilt for the 5 affected regions; all 12 cards now render with full data. Methodology footer (`#sources`, `#choices`, `#acknowledgements`) updated to credit Santana et al. and document the offshore-snap caveat. Final pre-deploy state.

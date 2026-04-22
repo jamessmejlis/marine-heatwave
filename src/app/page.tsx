@@ -324,13 +324,12 @@ export default async function Home() {
                   href="https://doi.org/10.3389/fmars.2025.1607806"
                   className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
                 >
-                  Fauchereau et al. (2025)
+                  Santana et al. (2025)
                 </a>
                 , the multi-model SST forecast paper that underpins NIWA's
                 monthly outlook — snapped to the nearest CoralTemp 5 km sea
-                pixel where Fauchereau's exact point sits on land (Fauchereau
-                used OISST at 25 km, where coastal points fall inside larger
-                sea pixels). The remaining seven regions are picked for
+                pixel where their exact point sits on land (they used OISST at
+                25 km, where coastal points fall inside larger sea pixels). The remaining seven regions are picked for
                 plausible offshore pixels representative of broad public place
                 names.
               </p>
@@ -396,7 +395,7 @@ export default async function Home() {
               <p className="mt-2 text-sm leading-relaxed">
                 <strong>Why single grid cells, not regional averages?</strong>{" "}
                 Each region is one 5-km pixel — simple, reproducible, easy to
-                audit. The five aquaculture pixels follow Fauchereau et al.
+                audit. The five aquaculture pixels follow Santana et al.
                 (2025) so anomalies are directly comparable to the published
                 NIWA-aligned forecast paper; the remaining seven are picked for
                 plausible offshore locations representative of the public place
@@ -515,7 +514,7 @@ export default async function Home() {
                   href="https://doi.org/10.3389/fmars.2025.1607806"
                   className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
                 >
-                  Fauchereau et al. (2025)
+                  Santana et al. (2025)
                 </a>
                 , whose multi-model SST forecast underpins NIWA's monthly outlook.
               </p>
