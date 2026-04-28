@@ -79,7 +79,7 @@ export default async function Home() {
               rel="noopener noreferrer"
               className="text-ink/60 transition-colors hover:text-marulho dark:text-slate-400"
             >
-              Built by Marulho
+              A Data Experiment, by Marulho ↗
             </a>
           </div>
           <h1 className="font-serif mt-4 text-4xl leading-[1.02] tracking-tight text-ink sm:text-[56px]">
