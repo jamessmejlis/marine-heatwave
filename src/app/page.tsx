@@ -74,7 +74,7 @@ export default async function Home() {
           <div className="flex items-center justify-between gap-4 font-mono text-[10px] font-medium tracking-[0.14em] text-marulho uppercase sm:text-xs sm:tracking-[0.2em]">
             <span>Marine Heatwave Live NZ</span>
             <a
-              href="https://marulho.co"
+              href="https://www.marulho.co"
               target="_blank"
               rel="noopener noreferrer"
               className="text-ink/60 transition-colors hover:text-marulho dark:text-slate-400"
@@ -555,7 +555,7 @@ export default async function Home() {
             <p className="mt-12 font-mono text-xs tracking-wide text-ink/50">
               A{" "}
               <a
-                href="https://marulho.co"
+                href="https://www.marulho.co"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-marulho underline decoration-marulho/40 underline-offset-2 hover:decoration-marulho"
